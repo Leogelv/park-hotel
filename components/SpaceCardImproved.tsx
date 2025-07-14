@@ -325,7 +325,11 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
               onClick={(e) => {
                 e.stopPropagation()
                 const targetUrl = "https://chigish.ru/booking"
-                window.top.location.href = targetUrl
+                if (window.top) {
+                  window.top.location.href = targetUrl
+                } else {
+                  window.location.href = targetUrl
+                }
               }}
             >
               Забронировать
