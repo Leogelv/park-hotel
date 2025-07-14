@@ -56,7 +56,7 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <span>Нет изображения</span>
+            <span className={typography.body.base}>Нет изображения</span>
           </div>
         )}
         
@@ -65,10 +65,10 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
       {/* Чипы под фотографией */}
       <div className="px-6 pt-4 pb-2">
         <div className="flex gap-2 flex-wrap">
-          <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm font-semibold">
+          <div className={`bg-primary/10 text-primary rounded-full px-3 py-1 ${typography.body.small} font-semibold`}>
             {tour.title}
           </div>
-          <div className="bg-neutral-100 text-neutral-700 rounded-full px-3 py-1 text-sm font-medium flex items-center gap-1">
+          <div className={`bg-neutral-100 text-neutral-700 rounded-full px-3 py-1 ${typography.body.small} font-medium flex items-center gap-1`}>
             <Calendar className="w-4 h-4" />
             {tour.duration_days} дней
           </div>
@@ -92,10 +92,10 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
         {/* Даты заездов */}
         {upcomingDates && upcomingDates.length > 0 && (
           <div className="mb-4 p-3 bg-gradient-to-r from-beige-50 to-white rounded-xl border border-beige-200">
-            <h4 className="text-sm font-semibold text-neutral-700 mb-2">Ближайшие заезды:</h4>
+            <h4 className={typography.body.small + " font-semibold text-neutral-700 mb-2"}>Ближайшие заезды:</h4>
             <div className="space-y-2">
               {upcomingDates.map((date, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
+                <div key={index} className={`flex items-center justify-between ${typography.body.small}`}>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-neutral-500" />
                     <span>
@@ -109,9 +109,9 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-neutral-500">мест:</span>
-                    <span className="font-medium text-primary">{date.available_spots}</span>
-                    <span className="text-neutral-500">из {date.total_capacity}</span>
+                    <span className={typography.body.small + " text-neutral-500"}>мест:</span>
+                    <span className={typography.body.small + " font-medium text-primary"}>{date.available_spots}</span>
+                    <span className={typography.body.small + " text-neutral-500"}>из {date.total_capacity}</span>
                   </div>
                 </div>
               ))}
@@ -122,25 +122,25 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
         {/* Цена */}
         <div className="mb-5 pb-5 border-b border-beige-200">
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-display font-bold text-primary">
+            <span className={typography.display.price + " text-primary"}>
               {tour.price.toLocaleString('ru-RU')} ₽
             </span>
             {(tour as any).discount_percent && (tour as any).discount_percent > 0 && (
-              <span className="text-lg text-neutral-400 line-through">
+              <span className={typography.display.oldPrice}>
                 {Math.round(tour.price / (1 - (tour as any).discount_percent / 100)).toLocaleString('ru-RU')} ₽
               </span>
             )}
           </div>
-          <span className="text-neutral-500 text-sm">за человека</span>
+          <span className={typography.body.small + " text-neutral-500"}>за человека</span>
         </div>
 
         {/* Секция "Включено в стоимость" */}
         {tour.included_services && tour.included_services.length > 0 && (
           <div className="mb-6 p-4 bg-gradient-to-br from-pastel-mint/20 to-transparent rounded-2xl">
-            <h4 className="font-semibold text-sm text-neutral-700 mb-3">Включено:</h4>
+            <h4 className={typography.body.small + " font-semibold text-neutral-700 mb-3"}>Включено:</h4>
             <ul className="space-y-2">
               {tour.included_services.slice(0, 3).map((service, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-neutral-600">
+                <li key={index} className={`flex items-start gap-2 ${typography.body.small} text-neutral-600`}>
                   <div className="w-5 h-5 bg-pastel-mint rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Check className="w-3 h-3 text-neutral-700" />
                   </div>
@@ -148,7 +148,7 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
                 </li>
               ))}
               {tour.included_services.length > 3 && (
-                <li className="text-sm text-primary font-medium pl-7">
+                <li className={typography.body.small + " text-primary font-medium pl-7"}>
                   + еще {tour.included_services.length - 3}
                 </li>
               )}
