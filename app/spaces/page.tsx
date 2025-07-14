@@ -132,41 +132,26 @@ export default function SpacesPage() {
               </>
             )}
 
-            {/* Лента номеров - адаптивная */}
-            <div className="relative">
-              {/* Мобильная версия - вертикальные карточки */}
-              <div className="block md:hidden space-y-6">
-                {spaces.map((space, index) => (
-                  <div 
-                    key={space._id} 
-                    className="animate-slide-up"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <SpaceCard space={space} />
-                  </div>
-                ))}
-              </div>
-
-              {/* Десктоп версия - горизонтальная лента */}
-              <div className="hidden md:block relative -mx-4 sm:-mx-6 lg:-mx-8">
-                <div className="overflow-x-auto py-8 pb-12">
-                  <div className="flex gap-6 w-max px-4 sm:px-6 lg:px-8">
-                    {spaces.map((space, index) => (
-                      <div 
-                        key={space._id} 
-                        className="animate-slide-up flex-shrink-0 w-80 lg:w-96"
-                        style={{ animationDelay: `${index * 100}ms` }}
-                      >
-                        <SpaceCard space={space} />
-                      </div>
-                    ))}
-                  </div>
+            {/* Горизонтальная лента номеров */}
+            <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
+              {/* Контейнер с горизонтальным скроллом */}
+              <div className="overflow-x-auto py-8 pb-12">
+                <div className="flex gap-6 w-max px-4 sm:px-6 lg:px-8">
+                  {spaces.map((space, index) => (
+                    <div 
+                      key={space._id} 
+                      className="animate-slide-up flex-shrink-0 w-80 md:w-96"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <SpaceCard space={space} />
+                    </div>
+                  ))}
                 </div>
-                
-                {/* Градиент для показа возможности скролла */}
-                <div className="absolute top-0 right-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to left, #feead3, transparent)'}} />
-                <div className="absolute top-0 left-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to right, #feead3, transparent)'}} />
               </div>
+              
+              {/* Градиент для показа возможности скролла */}
+              <div className="absolute top-0 right-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to left, #feead3, transparent)'}} />
+              <div className="absolute top-0 left-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to right, #feead3, transparent)'}} />
             </div>
           </>
         )}

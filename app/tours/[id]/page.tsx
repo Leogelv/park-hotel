@@ -43,7 +43,7 @@ export default function TourDetailPage() {
   const params = useParams()
   const router = useRouter()
   const [selectedDayIndex, setSelectedDayIndex] = useState(0)
-  const [activeModule, setActiveModule] = useState<'info' | 'pricing' | 'program'>('info')
+  const [activeModule, setActiveModule] = useState<'description' | 'services' | 'program'>('description')
 
   const tourId = params.id as Id<"tours">
   const tour = useQuery(api.tours.getTourWithDetails, { tourId })
@@ -78,77 +78,79 @@ export default function TourDetailPage() {
       {/* Основной контент */}
       <div className="flex-1 overflow-y-auto">
         <div className={spacing.container.default + " py-4"}>
-          {/* Компактная карточка тура */}
-          <div className="card mb-6 overflow-hidden">
-            {/* Горизонтальная компоновка */}
-            <div className="flex flex-col md:flex-row">
-              {/* Изображение */}
-              <div className="relative w-full md:w-80 h-64 md:h-72 bg-gradient-to-br from-primary/20 to-primary/10 flex-shrink-0">
-                {mainImageUrl ? (
-                  <Image
-                    src={mainImageUrl}
-                    alt={tour.title}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10" />
-                )}
-              </div>
-
-              {/* Информация о туре */}
-              <div className="flex-1 p-6">
-                <h1 className={typography.heading.section + " mb-2"}>{tour.title}</h1>
-                <p className={typography.body.base + " text-neutral-600 mb-4"}>{tour.region}</p>
-                
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-primary" />
-                    <span className={typography.body.small}>{tour.duration_days} дней</span>
-                  </div>
+          {/* Компактная карточка тура - показывается только когда активна вкладка описания */}
+          {activeModule === 'description' && (
+            <div className="card mb-6 overflow-hidden">
+              {/* Горизонтальная компоновка */}
+              <div className="flex flex-col md:flex-row">
+                {/* Изображение */}
+                <div className="relative w-full md:w-80 h-64 md:h-72 bg-gradient-to-br from-primary/20 to-primary/10 flex-shrink-0">
+                  {mainImageUrl ? (
+                    <Image
+                      src={mainImageUrl}
+                      alt={tour.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10" />
+                  )}
                 </div>
 
-                <p className={typography.body.base + " mb-4 line-clamp-3"}>{tour.description}</p>
-
-                {/* Цена и кнопка */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className={typography.heading.section + " text-primary"}>
-                      {tour.price.toLocaleString('ru-RU')} ₽
-                    </span>
-                    <span className={typography.body.small + " text-neutral-500"}>за человека</span>
+                {/* Информация о туре */}
+                <div className="flex-1 p-6">
+                  <h1 className={typography.heading.section + " mb-2"}>{tour.title}</h1>
+                  <p className={typography.body.base + " text-neutral-600 mb-4"}>{tour.region}</p>
+                  
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      <span className={typography.body.small}>{tour.duration_days} дней</span>
+                    </div>
                   </div>
-                  <button className="btn-primary text-sm py-2 px-4">
-                    Забронировать
-                  </button>
+
+                  <p className={typography.body.base + " mb-4"}>{tour.description}</p>
+
+                  {/* Цена и кнопка */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-baseline gap-2">
+                      <span className={typography.heading.section + " text-primary"}>
+                        {tour.price.toLocaleString('ru-RU')} ₽
+                      </span>
+                      <span className={typography.body.small + " text-neutral-500"}>за человека</span>
+                    </div>
+                    <button className="btn-primary text-sm py-2 px-4">
+                      Забронировать
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Переключатель модулей */}
           <div className="flex bg-white rounded-2xl p-1 mb-6 shadow-soft">
             <button
-              onClick={() => setActiveModule('info')}
+              onClick={() => setActiveModule('description')}
               className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
-                activeModule === 'info'
+                activeModule === 'description'
                   ? 'bg-primary text-white shadow-soft'
                   : 'text-neutral-600 hover:text-primary'
               }`}
             >
               <Info className="w-4 h-4" />
-              <span className="text-sm">Что включено</span>
+              <span className="text-sm">Описание</span>
             </button>
             <button
-              onClick={() => setActiveModule('pricing')}
+              onClick={() => setActiveModule('services')}
               className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
-                activeModule === 'pricing'
+                activeModule === 'services'
                   ? 'bg-primary text-white shadow-soft'
                   : 'text-neutral-600 hover:text-primary'
               }`}
             >
-              <DollarSign className="w-4 h-4" />
-              <span className="text-sm">Доп. услуги</span>
+              <Check className="w-4 h-4" />
+              <span className="text-sm">Состав услуг</span>
             </button>
             <button
               onClick={() => setActiveModule('program')}
@@ -165,9 +167,11 @@ export default function TourDetailPage() {
 
           {/* Контент модулей */}
           <div className="space-y-4">
-            {/* Модуль "Что включено" */}
-            {activeModule === 'info' && (
-              <div className="grid md:grid-cols-2 gap-4">
+            {/* Модуль "Описание" - уже показан в карточке выше */}
+
+            {/* Модуль "Состав услуг" */}
+            {activeModule === 'services' && (
+              <div className="space-y-4">
                 {/* Включено в стоимость */}
                 {tour.included_services && tour.included_services.length > 0 && (
                   <div className="card p-6">
@@ -186,43 +190,25 @@ export default function TourDetailPage() {
                   </div>
                 )}
 
-                {/* Не входит в стоимость */}
-                {tour.excluded_services && tour.excluded_services.length > 0 && (
+                {/* Дополнительные услуги (бывшие extra_services) */}
+                {tour.extra_services && tour.extra_services.length > 0 && (
                   <div className="card p-6">
-                    <h3 className={typography.heading.card + " mb-4 text-orange-600 flex items-center gap-2"}>
-                      <X className="w-5 h-5" />
-                      Дополнительно оплачивается
+                    <h3 className={typography.heading.card + " mb-4 text-blue-600 flex items-center gap-2"}>
+                      <DollarSign className="w-5 h-5" />
+                      Дополнительные услуги
                     </h3>
-                    <ul className="space-y-2">
-                      {tour.excluded_services.map((service, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <X className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                          <span className={typography.body.small}>{service}</span>
-                        </li>
+                    <div className="space-y-3">
+                      {tour.extra_services.map((service, index) => (
+                        <div key={index} className="flex items-center justify-between gap-4 p-3 bg-gradient-to-r from-beige-50 to-white rounded-lg">
+                          <span className={typography.body.base}>{service.name}</span>
+                          <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+                            {service.price.toLocaleString('ru-RU')} ₽
+                          </span>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* Модуль "Дополнительные услуги" */}
-            {activeModule === 'pricing' && tour.extra_services && tour.extra_services.length > 0 && (
-              <div className="card p-6">
-                <h3 className={typography.heading.card + " mb-4 text-blue-600 flex items-center gap-2"}>
-                  <DollarSign className="w-5 h-5" />
-                  Дополнительные услуги
-                </h3>
-                <div className="space-y-3">
-                  {tour.extra_services.map((service, index) => (
-                    <div key={index} className="flex items-center justify-between gap-4 p-3 bg-gradient-to-r from-beige-50 to-white rounded-lg">
-                      <span className={typography.body.base}>{service.name}</span>
-                      <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
-                        {service.price.toLocaleString('ru-RU')} ₽
-                      </span>
-                    </div>
-                  ))}
-                </div>
               </div>
             )}
 
@@ -282,30 +268,30 @@ export default function TourDetailPage() {
                       )}
                     </div>
 
-                    {/* Активности дня */}
+                    {/* Активности дня - горизонтальная лента */}
                     <div className="space-y-4">
                       <h4 className={typography.heading.card}>Активности дня</h4>
-                      <div className="space-y-3">
-                        {tour.days[selectedDayIndex].activities?.map((activity, index) => {
-                          const activityType = activityTypes[activity.type] || { 
-                            label: activity.type, 
-                            color: 'bg-neutral-500',
-                            icon: Coffee 
-                          }
-                          const Icon = activityType.icon
-                          
-                          return (
-                            <div key={activity._id} className="bg-white rounded-lg shadow-soft p-4">
-                              <div className="flex items-start gap-3">
-                                <div className={`w-8 h-8 ${activityType.color} rounded-lg flex items-center justify-center text-white flex-shrink-0`}>
-                                  <Icon className="w-4 h-4" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-start justify-between mb-2">
-                                    <div>
-                                      <h5 className={typography.body.base + " font-semibold mb-1"}>{activity.name}</h5>
+                      <div className="overflow-x-auto pb-2">
+                        <div className="flex gap-3 w-max">
+                          {tour.days[selectedDayIndex].activities?.map((activity, index) => {
+                            const activityType = activityTypes[activity.type] || { 
+                              label: activity.type, 
+                              color: 'bg-neutral-500',
+                              icon: Coffee 
+                            }
+                            const Icon = activityType.icon
+                            
+                            return (
+                              <div key={activity._id} className="bg-white rounded-lg shadow-soft p-3 flex-shrink-0 w-64">
+                                <div className="flex items-start gap-2">
+                                  <div className={`w-6 h-6 ${activityType.color} rounded flex items-center justify-center text-white flex-shrink-0`}>
+                                    <Icon className="w-3 h-3" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="mb-2">
+                                      <h5 className={typography.body.small + " font-semibold mb-1 line-clamp-2"}>{activity.name}</h5>
                                       {(activity.time_start || activity.time_end) && (
-                                        <p className={typography.body.small + " text-neutral-500"}>
+                                        <p className="text-xs text-neutral-500">
                                           {activity.time_start && activity.time_end 
                                             ? `${activity.time_start} - ${activity.time_end}`
                                             : activity.time_start || activity.time_end
@@ -313,21 +299,21 @@ export default function TourDetailPage() {
                                         </p>
                                       )}
                                     </div>
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${activityType.color} text-white`}>
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${activityType.color} text-white inline-block mb-2`}>
                                       {activityType.label}
                                     </span>
+                                    <p className="text-xs mb-2 line-clamp-2">{activity.description}</p>
+                                    {!activity.is_included && activity.price && (
+                                      <p className="text-xs text-orange-600 font-medium">
+                                        Доп: {activity.price.toLocaleString('ru-RU')} ₽
+                                      </p>
+                                    )}
                                   </div>
-                                  <p className={typography.body.small + " mb-2"}>{activity.description}</p>
-                                  {!activity.is_included && activity.price && (
-                                    <p className={typography.body.small + " text-orange-600 font-medium"}>
-                                      Дополнительно: {activity.price.toLocaleString('ru-RU')} ₽
-                                    </p>
-                                  )}
                                 </div>
                               </div>
-                            </div>
-                          )
-                        })}
+                            )
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
