@@ -78,6 +78,43 @@ export default function TourDetailPage() {
       {/* Основной контент */}
       <div className="flex-1 overflow-y-auto">
         <div className={spacing.container.default + " py-4"}>
+          {/* Переключатель модулей */}
+          <div className="flex bg-white rounded-2xl p-1 mb-6 shadow-soft">
+            <button
+              onClick={() => setActiveModule('description')}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
+                activeModule === 'description'
+                  ? 'bg-primary text-white shadow-soft'
+                  : 'text-neutral-600 hover:text-primary'
+              }`}
+            >
+              <Info className="w-4 h-4" />
+              <span className="text-sm">Описание</span>
+            </button>
+            <button
+              onClick={() => setActiveModule('services')}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
+                activeModule === 'services'
+                  ? 'bg-primary text-white shadow-soft'
+                  : 'text-neutral-600 hover:text-primary'
+              }`}
+            >
+              <Check className="w-4 h-4" />
+              <span className="text-sm">Состав услуг</span>
+            </button>
+            <button
+              onClick={() => setActiveModule('program')}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
+                activeModule === 'program'
+                  ? 'bg-primary text-white shadow-soft'
+                  : 'text-neutral-600 hover:text-primary'
+              }`}
+            >
+              <CalendarDays className="w-4 h-4" />
+              <span className="text-sm">Программа</span>
+            </button>
+          </div>
+
           {/* Компактная карточка тура - показывается только когда активна вкладка описания */}
           {activeModule === 'description' && (
             <div className="card mb-6 overflow-hidden">
@@ -127,43 +164,6 @@ export default function TourDetailPage() {
               </div>
             </div>
           )}
-
-          {/* Переключатель модулей */}
-          <div className="flex bg-white rounded-2xl p-1 mb-6 shadow-soft">
-            <button
-              onClick={() => setActiveModule('description')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
-                activeModule === 'description'
-                  ? 'bg-primary text-white shadow-soft'
-                  : 'text-neutral-600 hover:text-primary'
-              }`}
-            >
-              <Info className="w-4 h-4" />
-              <span className="text-sm">Описание</span>
-            </button>
-            <button
-              onClick={() => setActiveModule('services')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
-                activeModule === 'services'
-                  ? 'bg-primary text-white shadow-soft'
-                  : 'text-neutral-600 hover:text-primary'
-              }`}
-            >
-              <Check className="w-4 h-4" />
-              <span className="text-sm">Состав услуг</span>
-            </button>
-            <button
-              onClick={() => setActiveModule('program')}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
-                activeModule === 'program'
-                  ? 'bg-primary text-white shadow-soft'
-                  : 'text-neutral-600 hover:text-primary'
-              }`}
-            >
-              <CalendarDays className="w-4 h-4" />
-              <span className="text-sm">Программа</span>
-            </button>
-          </div>
 
           {/* Контент модулей */}
           <div className="space-y-4">
