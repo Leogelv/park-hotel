@@ -64,6 +64,8 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
     price: 0,
     discount_percent: 0,
     duration_days: 1,
+    max_participants: 10,
+    difficulty_level: 'легкий',
     is_active: true
   })
   
@@ -99,6 +101,8 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
         price: tour.price,
         discount_percent: tour.discount_percent || 0,
         duration_days: tour.duration_days,
+        max_participants: tour.max_participants || 10,
+        difficulty_level: tour.difficulty_level || 'легкий',
         is_active: tour.is_active !== false
       })
       
@@ -133,6 +137,8 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
         price: tour.price,
         discount_percent: tour.discount_percent || 0,
         duration_days: tour.duration_days,
+        max_participants: tour.max_participants || 10,
+        difficulty_level: tour.difficulty_level || 'легкий',
         is_active: tour.is_active !== false
       })
     }
@@ -288,7 +294,9 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
           }))
         })),
         included_services: includedServices.filter(s => s.length > 0),
-        extra_services: extraServices.filter(s => s.name.length > 0)
+        extra_services: extraServices
+          .filter(s => s.name.length > 0 && s.price !== undefined)
+          .map(s => ({ name: s.name, price: s.price! }))
       }
       
       // ЛОГИРОВАНИЕ: проверяем extra_services

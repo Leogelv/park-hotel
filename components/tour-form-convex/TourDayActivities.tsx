@@ -69,7 +69,7 @@ function SortableActivity({
   onRemove,
   onImageSelect,
   onImageRemove,
-  fileInputRef,
+  activityFileInputRefs,
   typography,
   forms
 }: {
