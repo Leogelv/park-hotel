@@ -136,7 +136,7 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
 
         {/* Секция "Включено в стоимость" */}
         {tour.included_services && tour.included_services.length > 0 && (
-          <div className="mb-4 p-4 bg-gradient-to-br from-pastel-mint/20 to-transparent rounded-2xl">
+          <div className="mb-6 p-4 bg-gradient-to-br from-pastel-mint/20 to-transparent rounded-2xl">
             <h4 className="font-semibold text-sm text-neutral-700 mb-3">Включено:</h4>
             <ul className="space-y-2">
               {tour.included_services.slice(0, 3).map((service, index) => (
