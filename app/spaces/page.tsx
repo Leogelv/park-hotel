@@ -17,13 +17,6 @@ export default function SpacesPage() {
     
 
       <div className={spacing.container.wide + " py-12"}>
-        {/* Hero секция */}
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className={typography.heading.page + " mb-4"}>Наши номера</h1>
-          <p className={typography.body.large + " text-neutral-600 max-w-2xl mx-auto"}>
-            Выберите идеальный номер для вашего отдыха в горном Алтае
-          </p>
-        </div>
 
         {spaces === undefined ? (
           <div className="flex justify-center items-center min-h-[400px]">
