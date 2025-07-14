@@ -1,26 +1,204 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Основные цвета */
+  --foreground: #262626;
+  --background: #FEFBF7;
+  
+  /* Цвета для элементов */
+  --card-background: #FFFFFF;
+  --border-color: #F5E6D3;
+  --shadow-color: rgba(0, 0, 0, 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #FAF5EE;
+    --background: #1A1613;
+    --card-background: #262626;
+    --border-color: #3D3532;
+    --shadow-color: rgba(0, 0, 0, 0.3);
   }
 }
 
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Базовые стили для заголовков */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* Кастомные компоненты */
+@layer components {
+  /* Кнопки */
+  .btn-primary {
+    @apply bg-primary text-white font-medium py-3 px-6 rounded-2xl 
+    hover:bg-primary-dark transition-all duration-200 
+    shadow-soft hover:shadow-medium transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-white font-medium py-3 px-6 rounded-2xl 
+    hover:bg-secondary-dark transition-all duration-200 
+    shadow-soft hover:shadow-medium transform hover:-translate-y-0.5;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary text-primary font-medium py-3 px-6 rounded-2xl 
+    hover:bg-primary hover:text-white transition-all duration-200 
+    transform hover:-translate-y-0.5;
+  }
+  
+  /* Заголовки страниц */
+  .page-title {
+    @apply text-secondary font-display font-bold;
+  }
+  
+  /* Заголовки туров и дней */
+  .tour-title {
+    @apply text-primary font-display font-semibold;
+  }
+  
+  /* Карточки */
+  .card {
+    @apply bg-white rounded-3xl shadow-soft hover:shadow-large 
+    transition-all duration-300 overflow-hidden;
+  }
+  
+  /* Контейнеры */
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-padding {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+}
+
+/* Кастомные утилиты */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Градиенты */
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary-400 to-primary-600;
+  }
+  
+  .gradient-beige {
+    @apply bg-gradient-to-br from-beige-100 to-beige-300;
+  }
+  
+  .gradient-sunset {
+    @apply bg-gradient-to-br from-primary-300 via-pastel-peach to-pastel-rose;
+  }
+  
+  /* Анимации */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  /* Задержки анимации */
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+  
+  .animation-delay-800 {
+    animation-delay: 800ms;
+  }
+  
+  .animation-delay-1000 {
+    animation-delay: 1000ms;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+/* Глобальные стили для форм - Темный текст для удобства чтения */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+select,
+textarea {
+  @apply text-neutral-800 placeholder-neutral-400;
+}
+
+/* Темная тема - белый фон в формах для контраста */
+@media (prefers-color-scheme: dark) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  select,
+  textarea {
+    @apply text-neutral-800 placeholder-neutral-400 bg-white;
+  }
 }

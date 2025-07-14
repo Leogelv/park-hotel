@@ -1,0 +1,10 @@
+{
+  "functions": "convex/",
+  "authConfig": {
+    "providers": []
+  },
+  "selfHosted": {
+    "url": "https://convex-backend-production-587a.up.railway.app",
+    "adminKey": "self-hosted-convex|014dd603afe27576459853d9b6acffe0c8be4cf0aa532a2398b33fd3df705e63f4b0e14146"
+  }
+}
