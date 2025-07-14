@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Edit2, Trash2, Eye, EyeOff, Home, Users, Image as ImageIcon, Check, X, DollarSign } from 'lucide-react'
+import { Plus, Edit2, Trash2, Eye, EyeOff, Home, Users, Image as ImageIcon, Check, X, DollarSign, Settings } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useQuery, useMutation } from 'convex/react'
@@ -9,6 +9,7 @@ import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useFileUrl } from '@/hooks/useConvex'
 import { typography, spacing, forms } from '@/hooks/useDesignTokens'
+import { CategoryManagementModal } from '@/components/CategoryManagementModal'
 
 // Компонент для превью изображения
 function SpaceImagePreview({ storageId }: { storageId?: string }) {
@@ -111,14 +112,13 @@ function EditableRoomType({
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(value)
+  const spaceTypes = useQuery(api.spaceTypes.getAllSpaceTypes, { onlyActive: true })
   
-  const roomTypeLabels: Record<string, string> = {
-    hotel_room: 'Номер в отеле',
-    bungalow: 'Домик-бунгало',
-    scandinavian_house: 'Скандинавский дом',
-    chalet: 'Домик-шале',
-    townhouse: 'Таунхаус'
-  }
+  // Создаем маппинг для обратной совместимости
+  const roomTypeLabels: Record<string, string> = spaceTypes?.reduce((acc, type) => {
+    acc[type.slug] = type.display_name || type.name
+    return acc
+  }, {} as Record<string, string>) || {}
   
   const handleSave = () => {
     onSave(editValue)
@@ -134,8 +134,8 @@ function EditableRoomType({
         className={"px-2 py-1 border border-primary rounded focus:outline-none focus:ring-2 focus:ring-primary text-sm " + forms.select}
         autoFocus
       >
-        {Object.entries(roomTypeLabels).map(([key, label]) => (
-          <option key={key} value={key}>{label}</option>
+        {spaceTypes?.map((type) => (
+          <option key={type.slug} value={type.slug}>{type.display_name || type.name}</option>
         ))}
       </select>
     )
@@ -154,10 +154,18 @@ function EditableRoomType({
 }
 
 export default function AdminSpacesPage() {
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined)
   const spaces = useQuery(api.spaces.getAllSpaces, {})
+  const spaceTypes = useQuery(api.spaceTypes.getAllSpaceTypes, { onlyActive: true })
   const updateSpace = useMutation(api.spaces.updateSpace)
   const deleteSpace = useMutation(api.spaces.deleteSpace)
   const [updatingField, setUpdatingField] = useState<string | null>(null)
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  
+  // Фильтруем номера по выбранной категории
+  const filteredSpaces = spaces?.filter(space => 
+    !selectedCategory || space.room_type === selectedCategory
+  )
   
   const handleUpdateField = async (spaceId: Id<"spaces">, field: string, value: any) => {
     setUpdatingField(`${spaceId}-${field}`)
@@ -199,14 +207,56 @@ export default function AdminSpacesPage() {
       <div className={spacing.container.default + " py-8"}>
         <div className="flex justify-between items-center mb-8">
           <h1 className={typography.heading.page}>Управление номерами</h1>
-          <Link
-            href="/admin/spaces/new"
-            className="bg-primary text-white rounded-xl py-3 px-6 font-medium hover:bg-primary-dark transition-colors flex items-center gap-2 shadow-soft hover:shadow-medium"
-          >
-            <Plus className="w-5 h-5" />
-            Добавить номер
-          </Link>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setIsCategoryModalOpen(true)}
+              className="bg-white text-primary border-2 border-primary rounded-xl py-3 px-6 font-medium hover:bg-primary hover:text-white transition-colors flex items-center gap-2 shadow-soft hover:shadow-medium"
+            >
+              <Settings className="w-5 h-5" />
+              Управление категориями
+            </button>
+            <Link
+              href="/admin/spaces/new"
+              className="bg-primary text-white rounded-xl py-3 px-6 font-medium hover:bg-primary-dark transition-colors flex items-center gap-2 shadow-soft hover:shadow-medium"
+            >
+              <Plus className="w-5 h-5" />
+              Добавить номер
+            </Link>
+          </div>
         </div>
+        
+        {/* Фильтр по категориям */}
+        {spaceTypes && spaceTypes.length > 0 && (
+          <div className="mb-6">
+            <p className={typography.body.small + " mb-3"}>Фильтр по категориям:</p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setSelectedCategory(undefined)}
+                className={`px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                  selectedCategory === undefined
+                    ? 'bg-primary text-white shadow-soft'
+                    : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
+                }`}
+              >
+                Все номера{spaces && ` (${spaces.length})`}
+              </button>
+              {spaceTypes.map((type) => (
+                <button
+                  key={type._id}
+                  onClick={() => setSelectedCategory(type.slug)}
+                  className={`px-4 py-2 rounded-full font-medium transition-all duration-300 ${
+                    selectedCategory === type.slug
+                      ? 'bg-primary text-white shadow-soft'
+                      : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
+                  }`}
+                >
+                  {type.display_name || type.name}
+                  {spaces && ` (${spaces.filter(s => s.room_type === type.slug).length})`}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         
         {spaces === undefined ? (
           <div className="flex justify-center items-center min-h-[400px]">
@@ -215,12 +265,14 @@ export default function AdminSpacesPage() {
               <div className={typography.body.large}>Загрузка номеров...</div>
             </div>
           </div>
-        ) : spaces.length === 0 ? (
+        ) : !filteredSpaces || filteredSpaces.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-24 h-24 bg-pastel-peach/30 rounded-full flex items-center justify-center mx-auto mb-6">
               <Home className="w-12 h-12 text-primary" />
             </div>
-            <p className={typography.body.large + " mb-4"}>Номера пока не добавлены</p>
+            <p className={typography.body.large + " mb-4"}>
+              {selectedCategory ? 'Нет номеров в этой категории' : 'Номера пока не добавлены'}
+            </p>
             <Link 
               href="/admin/spaces/new" 
               className="btn-primary inline-flex items-center gap-2"
@@ -259,7 +311,7 @@ export default function AdminSpacesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
-                  {spaces.map((space) => (
+                  {filteredSpaces!.map((space) => (
                     <tr key={space._id} className="hover:bg-beige-50/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Link href={`/admin/spaces/${space._id}`} className="block">
@@ -404,6 +456,11 @@ export default function AdminSpacesPage() {
           </div>
         )}
       </div>
+      
+      <CategoryManagementModal 
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+      />
     </div>
   )
 }

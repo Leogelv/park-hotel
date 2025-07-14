@@ -16,11 +16,11 @@ export default function ToursPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-beige-50 to-white">
+    <div className="min-h-screen" style={{backgroundColor: '#feead3'}}>
       {/* Header */}
       
 
-      <div className={spacing.container.wide + " py-12"}>
+      <div className={spacing.container.wide + " py-12 min-h-[80vh] flex flex-col justify-center"}>
         {/* Hero секция */}
         <div className="text-center mb-12 animate-fade-in">
          
@@ -48,20 +48,22 @@ export default function ToursPage() {
         ) : (
           <>
             {/* Десктоп - сетка */}
-            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {tours.map((tour, index) => (
-                <div 
-                  key={tour._id} 
-                  className="animate-slide-up"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <TourCard tour={{...tour, id: tour._id, name: tour.title}} onOpenDetails={handleTourClick} />
-                </div>
-              ))}
+            <div className="hidden md:block py-8">
+              <div className={`grid gap-8 max-w-7xl mx-auto ${tours.length === 1 ? 'grid-cols-1 place-items-center' : 'md:grid-cols-2 lg:grid-cols-3 place-items-start'}`}>
+                {tours.map((tour, index) => (
+                  <div 
+                    key={tour._id} 
+                    className="animate-slide-up"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <TourCard tour={{...tour, id: tour._id, name: tour.title}} onOpenDetails={handleTourClick} />
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Мобильная версия - вертикальный список */}
-            <div className="md:hidden space-y-6">
+            <div className="md:hidden space-y-6 py-8 max-w-lg mx-auto">
               {tours.map((tour, index) => (
                 <div 
                   key={tour._id}

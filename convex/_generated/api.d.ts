@@ -24,6 +24,7 @@ import type * as seedSpaceTypes from "../seedSpaceTypes.js";
 import type * as seedSpaces from "../seedSpaces.js";
 import type * as seedTourDaysAndActivities from "../seedTourDaysAndActivities.js";
 import type * as seedUpdateTourPrice from "../seedUpdateTourPrice.js";
+import type * as spaceTypes from "../spaceTypes.js";
 import type * as spaces from "../spaces.js";
 import type * as tourDays from "../tourDays.js";
 import type * as tours from "../tours.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   seedSpaces: typeof seedSpaces;
   seedTourDaysAndActivities: typeof seedTourDaysAndActivities;
   seedUpdateTourPrice: typeof seedUpdateTourPrice;
+  spaceTypes: typeof spaceTypes;
   spaces: typeof spaces;
   tourDays: typeof tourDays;
   tours: typeof tours;

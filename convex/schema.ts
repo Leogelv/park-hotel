@@ -83,11 +83,14 @@ export default defineSchema({
     .index("by_availability", ["is_available"])
     .index("by_original_id", ["original_id"]),
 
-  // Таблица типов размещения
+  // Таблица типов размещения с управлением порядком
   space_types: defineTable({
     type_id: v.number(), // 1-5 как в исходной системе
     name: v.string(), // Номера в отеле, Домики-бунгало и т.д.
     slug: v.string(), // hotel_room, bungalow и т.д.
+    display_name: v.optional(v.string()), // Отображаемое название для пользователей
+    order_index: v.optional(v.number()), // Порядковый номер для сортировки
+    is_active: v.optional(v.boolean()), // Активность категории
     created_at: v.number(),
     updated_at: v.number()
   }).index("by_type_id", ["type_id"])

@@ -3,7 +3,7 @@ import { typography, spacing } from '@/hooks/useDesignTokens'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-beige-50 to-white flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: '#feead3'}}>
       <div className={spacing.container.wide + " max-w-4xl mx-auto"}>
         <div className="text-center mb-12">
           <h1 className={typography.heading.section + " mb-4"}>

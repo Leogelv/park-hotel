@@ -142,12 +142,12 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
 
   return (
     <div 
-      className="card group hover:scale-[1.02] transition-all duration-300 cursor-pointer" 
+      className="card group hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full flex flex-col" 
       onClick={handleCardClick}
     >
       {/* Галерея изображений */}
       <div 
-        className="relative h-72 bg-gradient-to-br from-beige-100 to-beige-200 group overflow-hidden"
+        className="relative h-48 bg-gradient-to-br from-beige-100 to-beige-200 group overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -213,7 +213,7 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
       </div>
 
       {/* Контент */}
-      <div className="p-6">
+      <div className="p-6 flex-1 flex flex-col">
         <h3 className={typography.heading.subsection + " mb-3"}>{space.name}</h3>
         
         {/* Описание */}
@@ -222,18 +222,8 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
             isExpanded ? '' : 'line-clamp-2'
           }`}>
             {space.description}
+            {!isExpanded && space.description && space.description.length > 100 && '...'}
           </p>
-          {space.description && space.description.length > 100 && (
-            <button 
-              className="text-primary text-sm font-medium mt-2 hover:text-primary-dark transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsExpanded(!isExpanded)
-              }}
-            >
-              {isExpanded ? 'Свернуть' : 'Читать далее'}
-            </button>
-          )}
         </div>
         
         {/* Характеристики */}
@@ -281,60 +271,70 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
         )}
         
         {/* Цена и кнопка */}
-        <div className="bg-gradient-to-r from-beige-50 to-white border border-beige-200 rounded-2xl p-4 mt-4">
-          <div className="flex items-center justify-between">
-            <div className="relative flex-1">
-              {space.discount_percent && space.discount_percent > 0 ? (
-                <>
-                  {/* Бейдж скидки */}
-                  <div className="absolute -top-3 -left-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
-                    -{space.discount_percent}%
-                  </div>
-                  
-                  <div className="flex flex-col space-y-1">
-                    <span className="text-sm line-through text-neutral-400 font-medium">
-                      {Math.round(space.price_per_night / (1 - space.discount_percent / 100)).toLocaleString('ru-RU')} ₽
-                    </span>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl text-green-600 font-bold">
-                        {space.price_per_night.toLocaleString('ru-RU')} ₽
-                      </span>
-                      <span className="text-neutral-500 text-sm">
-                        {space.price_per_night ? 'за ночь' : 'в час'}
-                      </span>
-                    </div>
-                    <span className="text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-lg inline-block w-fit">
-                      Экономия {Math.round((space.price_per_night / (1 - space.discount_percent / 100)) - space.price_per_night).toLocaleString('ru-RU')} ₽
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-bold text-primary">
-                    {space.price_per_night ? space.price_per_night.toLocaleString('ru-RU') : space.hourly_rate?.toLocaleString('ru-RU')} ₽
-                  </span>
-                  <span className="text-neutral-500 text-sm">
-                    {space.price_per_night ? 'за ночь' : 'в час'}
-                  </span>
+        <div className="bg-gradient-to-r from-beige-50 to-white border border-beige-200 rounded-2xl p-4 mt-auto">
+          {space.discount_percent && space.discount_percent > 0 ? (
+            <div className="space-y-3">
+              {/* Все что касается цены в одном ряду */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm line-through text-neutral-400 font-medium">
+                  {Math.round(space.price_per_night / (1 - space.discount_percent / 100)).toLocaleString('ru-RU')} ₽
+                </span>
+                <div className="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                  -{space.discount_percent}%
                 </div>
-              )}
+                <span className="text-xl text-primary font-bold">
+                  {space.price_per_night.toLocaleString('ru-RU')} ₽
+                </span>
+                <span className="text-neutral-500 text-sm">
+                  {space.price_per_night ? 'за ночь' : 'в час'}
+                </span>
+              </div>
+              
+              {/* Кнопка */}
+              <button 
+                className="w-full bg-gradient-to-r from-primary to-primary-dark text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  const targetUrl = "https://chigish.ru/booking"
+                  if (window.top) {
+                    window.top.location.href = targetUrl
+                  } else {
+                    window.location.href = targetUrl
+                  }
+                }}
+              >
+                Забронировать
+              </button>
             </div>
-            
-            <button 
-              className="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-2.5 rounded-xl font-medium text-sm shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-0"
-              onClick={(e) => {
-                e.stopPropagation()
-                const targetUrl = "https://chigish.ru/booking"
-                if (window.top) {
-                  window.top.location.href = targetUrl
-                } else {
-                  window.location.href = targetUrl
-                }
-              }}
-            >
-              Забронировать
-            </button>
-          </div>
+          ) : (
+            <div className="space-y-3">
+              {/* Цена без скидки */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold text-primary">
+                  {space.price_per_night ? space.price_per_night.toLocaleString('ru-RU') : space.hourly_rate?.toLocaleString('ru-RU')} ₽
+                </span>
+                <span className="text-neutral-500 text-sm">
+                  {space.price_per_night ? 'за ночь' : 'в час'}
+                </span>
+              </div>
+              
+              {/* Кнопка */}
+              <button 
+                className="w-full bg-gradient-to-r from-primary to-primary-dark text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-0"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  const targetUrl = "https://chigish.ru/booking"
+                  if (window.top) {
+                    window.top.location.href = targetUrl
+                  } else {
+                    window.location.href = targetUrl
+                  }
+                }}
+              >
+                Забронировать
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

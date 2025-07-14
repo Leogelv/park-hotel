@@ -19,15 +19,15 @@ const activityTypes: Record<string, { label: string; color: string; icon: any }>
   'вечернее мероприятие': { label: 'Вечер', color: 'bg-indigo-500', icon: Mountain }
 }
 
-// Компонент для изображения активности
-function ActivityImage({ activity }: { activity: any }) {
+// Компонент для изображения активности - как отдельный компонент чтобы не нарушать Rules of Hooks
+function ActivityImageComponent({ activity }: { activity: any }) {
   const storageImageUrl = useFileUrl(activity.image)
   const imageUrl = storageImageUrl || activity.image_url
   
   if (!imageUrl) return null
   
   return (
-    <div className="relative w-full h-48 rounded-xl overflow-hidden mb-4">
+    <div className="relative w-full h-48 overflow-hidden">
       <Image
         src={imageUrl}
         alt={activity.name}
@@ -50,7 +50,7 @@ export default function TourDetailPage() {
 
   if (!tour) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-beige-50 to-pastel-peach/20 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: '#feead3'}}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
           <p className={typography.body.base}>Загрузка тура...</p>
@@ -60,7 +60,7 @@ export default function TourDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-beige-50 to-pastel-peach/20">
+    <div className="min-h-screen" style={{backgroundColor: '#feead3'}}>
       {/* Хедер с кнопкой назад */}
       <div className="bg-white/80 backdrop-blur-md shadow-soft sticky top-0 z-10">
         <div className={spacing.container.default + " py-4"}>
@@ -107,33 +107,6 @@ export default function TourDetailPage() {
                 <div>
                   <p className={typography.body.caption}>Длительность</p>
                   <p className={typography.body.base + " font-semibold"}>{tour.duration_days} дней</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-pastel-lavender/30 rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <p className={typography.body.caption}>Группа</p>
-                  <p className={typography.body.base + " font-semibold"}>до {tour.max_participants} чел.</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-pastel-peach/30 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <p className={typography.body.caption}>Регион</p>
-                  <p className={typography.body.base + " font-semibold"}>{tour.region}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-pastel-sky/30 rounded-xl flex items-center justify-center">
-                  <Mountain className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <p className={typography.body.caption}>Сложность</p>
-                  <p className={typography.body.base + " font-semibold"}>{tour.difficulty_level}</p>
                 </div>
               </div>
             </div>
@@ -198,6 +171,28 @@ export default function TourDetailPage() {
             </ul>
           </div>
         </div>
+
+        {/* Дополнительные услуги */}
+        {tour.extra_services && tour.extra_services.length > 0 && (
+          <div className="card p-8">
+            <h2 className={typography.heading.subsection + " mb-6 text-blue-600 flex items-center gap-2"}>
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <span className="text-lg">💰</span>
+              </div>
+              Дополнительные услуги
+            </h2>
+            <div className="space-y-3">
+              {tour.extra_services.map((service, index) => (
+                <div key={index} className="flex items-center justify-between gap-4 p-3 bg-gradient-to-r from-beige-50 to-white rounded-lg">
+                  <span className={typography.body.base}>{service.name}</span>
+                  <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+                    {service.price.toLocaleString('ru-RU')} ₽
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Программа тура по дням */}
         {tour.days && tour.days.length > 0 && (
@@ -269,7 +264,7 @@ export default function TourDetailPage() {
                       
                       return (
                         <div key={activity._id} className="bg-white rounded-2xl shadow-soft overflow-hidden hover:shadow-medium transition-all">
-                          <ActivityImage activity={activity} />
+                          <ActivityImageComponent activity={activity} />
                           
                           <div className="p-6">
                             <div className="flex items-start gap-4">

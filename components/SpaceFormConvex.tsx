@@ -104,13 +104,7 @@ function SortableImage({ image, onRemove }: { image: SpaceImage; onRemove: () =>
   )
 }
 
-const roomTypes = [
-  { value: 'hotel_room', label: 'Номер в отеле' },
-  { value: 'bungalow', label: 'Домик-бунгало' },
-  { value: 'scandinavian_house', label: 'Скандинавский дом' },
-  { value: 'chalet', label: 'Домик-шале' },
-  { value: 'townhouse', label: 'Таунхаус' }
-]
+// Удалено статическое определение roomTypes - теперь используем из БД
 
 const amenitiesList = [
   'Wi-Fi',
@@ -140,6 +134,9 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   
+  // Загружаем категории из БД
+  const spaceTypes = useQuery(api.spaceTypes.getAllSpaceTypes, { onlyActive: true })
+  
   // Состояние формы
   const [formData, setFormData] = useState({
     name: '',
@@ -148,7 +145,8 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
     area_sqm: 25,
     floor: 1,
     amenities: [] as string[],
-    room_type: 'hotel_room',
+    room_type: '',
+    room_type_id: undefined as Id<"space_types"> | undefined,
     price_per_night: 0,
     discount_percent: 0,
     hourly_rate: 0,
@@ -187,6 +185,7 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
         floor: space.floor || 1,
         amenities: space.amenities || [],
         room_type: space.room_type,
+        room_type_id: space.room_type_id,
         price_per_night: space.price_per_night || 0,
         discount_percent: space.discount_percent || 0,
         hourly_rate: space.hourly_rate || 0,
@@ -266,6 +265,13 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
   // Обработка отправки формы
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Проверка выбора типа номера
+    if (!formData.room_type_id) {
+      alert('Пожалуйста, выберите тип номера')
+      return
+    }
+    
     setLoading(true)
     
     try {
@@ -347,13 +353,24 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
                 Тип номера
               </label>
               <select
-                value={formData.room_type}
-                onChange={(e) => setFormData({ ...formData, room_type: e.target.value })}
+                value={formData.room_type_id || ''}
+                onChange={(e) => {
+                  const selectedType = spaceTypes?.find(t => t._id === e.target.value)
+                  if (selectedType) {
+                    setFormData({ 
+                      ...formData, 
+                      room_type_id: selectedType._id,
+                      room_type: selectedType.slug 
+                    })
+                  }
+                }}
                 className={"w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent " + forms.select}
+                disabled={!spaceTypes || spaceTypes.length === 0}
               >
-                {roomTypes.map(type => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
+                <option value="">Выберите тип номера</option>
+                {spaceTypes?.map(type => (
+                  <option key={type._id} value={type._id}>
+                    {type.display_name || type.name}
                   </option>
                 ))}
               </select>
