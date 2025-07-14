@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import SpaceCard from '@/components/SpaceCardImproved'
+import MobileCategorySelector from '@/components/MobileCategorySelector'
 import { useSpaces, useRoomTypes } from '@/hooks/useConvex'
 import { typography, spacing } from '@/hooks/useDesignTokens'
 
@@ -11,12 +12,42 @@ export default function SpacesPage() {
   const spaces = useSpaces(true, selectedCategory) // только доступные, с фильтром по категории
   const roomTypes = useRoomTypes()
 
+  // Подготавливаем категории для мобильного селектора
+  const categoryOptions = [
+    { 
+      value: undefined, 
+      label: 'Все номера', 
+      count: spaces?.length || 0 
+    },
+    ...(roomTypes || []).map(type => {
+      const getTypeLabel = (roomType: string): string => {
+        const labels: { [key: string]: string } = {
+          'hotel_room': 'Номера в отеле',
+          'bungalow': 'Бунгало',
+          'scandinavian_house': 'Скандинавские дома',
+          'chalet': 'Шале',
+          'townhouse': 'Таунхаусы',
+          'suite': 'Люксы',
+          'standard': 'Стандарт',
+          'deluxe': 'Делюкс'
+        }
+        return labels[roomType] || roomType
+      }
+      
+      return {
+        value: type,
+        label: getTypeLabel(type),
+        count: spaces?.filter(s => s.room_type === type).length || 0
+      }
+    })
+  ]
+
   return (
     <div className="min-h-screen" style={{backgroundColor: '#feead3'}}>
       {/* Header */}
     
 
-      <div className={spacing.container.wide + " py-12"}>
+      <div className={spacing.container.wide + " py-8 md:py-12"}>
 
         {spaces === undefined ? (
           <div className="flex justify-center items-center min-h-[400px]">
@@ -39,76 +70,103 @@ export default function SpacesPage() {
           </div>
         ) : (
           <>
-            {/* Кнопки фильтров по категориям */}
+            {/* Категории - десктоп и мобильная версия */}
             {roomTypes && roomTypes.length > 0 && (
-              <div className="mb-8">
-                <div className="flex flex-wrap justify-center gap-3">
-                  <button
-                    onClick={() => setSelectedCategory(undefined)}
-                    className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                      selectedCategory === undefined
-                        ? 'bg-primary text-white shadow-soft'
-                        : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
-                    }`}
-                  >
-                    Все номера
-                  </button>
-                  {roomTypes
-                    .sort()
-                    .map((type) => {
-                      // Функция для получения читабельного названия типа номера
-                      const getTypeLabel = (roomType: string): string => {
-                        const labels: { [key: string]: string } = {
-                          'hotel_room': 'Номера в отеле',
-                          'bungalow': 'Бунгало',
-                          'scandinavian_house': 'Скандинавские дома',
-                          'chalet': 'Шале',
-                          'townhouse': 'Таунхаусы',
-                          'suite': 'Люксы',
-                          'standard': 'Стандарт',
-                          'deluxe': 'Делюкс'
-                        }
-                        return labels[roomType] || roomType
-                      }
-
-                      return (
-                        <button
-                          key={type}
-                          onClick={() => setSelectedCategory(type)}
-                          className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                            selectedCategory === type
-                              ? 'bg-primary text-white shadow-soft'
-                              : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
-                          }`}
-                        >
-                          {getTypeLabel(type)}
-                        </button>
-                      )
-                    })}
+              <>
+                {/* Мобильный селектор */}
+                <div className="block md:hidden mb-6">
+                  <MobileCategorySelector
+                    categories={categoryOptions}
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
+                  />
                 </div>
-              </div>
+
+                {/* Десктоп кнопки */}
+                <div className="hidden md:block mb-8">
+                  <div className="flex flex-wrap justify-center gap-3">
+                    <button
+                      onClick={() => setSelectedCategory(undefined)}
+                      className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                        selectedCategory === undefined
+                          ? 'bg-primary text-white shadow-soft'
+                          : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
+                      }`}
+                    >
+                      Все номера
+                    </button>
+                    {roomTypes
+                      .sort()
+                      .map((type) => {
+                        // Функция для получения читабельного названия типа номера
+                        const getTypeLabel = (roomType: string): string => {
+                          const labels: { [key: string]: string } = {
+                            'hotel_room': 'Номера в отеле',
+                            'bungalow': 'Бунгало',
+                            'scandinavian_house': 'Скандинавские дома',
+                            'chalet': 'Шале',
+                            'townhouse': 'Таунхаусы',
+                            'suite': 'Люксы',
+                            'standard': 'Стандарт',
+                            'deluxe': 'Делюкс'
+                          }
+                          return labels[roomType] || roomType
+                        }
+
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedCategory(type)}
+                            className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                              selectedCategory === type
+                                ? 'bg-primary text-white shadow-soft'
+                                : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
+                            }`}
+                          >
+                            {getTypeLabel(type)}
+                          </button>
+                        )
+                      })}
+                  </div>
+                </div>
+              </>
             )}
 
-            {/* Горизонтальная лента номеров */}
-            <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
-              {/* Контейнер с горизонтальным скроллом */}
-              <div className="overflow-x-auto py-8 pb-12">
-                <div className="flex gap-6 w-max px-4 sm:px-6 lg:px-8">
-                  {spaces.map((space, index) => (
-                    <div 
-                      key={space._id} 
-                      className="animate-slide-up flex-shrink-0 w-80 md:w-96"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <SpaceCard space={space} />
-                    </div>
-                  ))}
-                </div>
+            {/* Лента номеров - адаптивная */}
+            <div className="relative">
+              {/* Мобильная версия - вертикальные карточки */}
+              <div className="block md:hidden space-y-6">
+                {spaces.map((space, index) => (
+                  <div 
+                    key={space._id} 
+                    className="animate-slide-up"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <SpaceCard space={space} />
+                  </div>
+                ))}
               </div>
-              
-              {/* Градиент для показа возможности скролла */}
-              <div className="absolute top-0 right-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to left, #feead3, transparent)'}} />
-              <div className="absolute top-0 left-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to right, #feead3, transparent)'}} />
+
+              {/* Десктоп версия - горизонтальная лента */}
+              <div className="hidden md:block relative -mx-4 sm:-mx-6 lg:-mx-8">
+                <div className="overflow-x-auto py-8 pb-12">
+                  <div className="flex gap-6 w-max px-4 sm:px-6 lg:px-8">
+                    {spaces.map((space, index) => (
+                      <div 
+                        key={space._id} 
+                        className="animate-slide-up flex-shrink-0 w-80 lg:w-96"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <SpaceCard space={space} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Градиент для показа возможности скролла */}
+                <div className="absolute top-0 right-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to left, #feead3, transparent)'}} />
+                <div className="absolute top-0 left-0 w-8 h-full pointer-events-none" style={{background: 'linear-gradient(to right, #feead3, transparent)'}} />
+              </div>
             </div>
           </>
         )}

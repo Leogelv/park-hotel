@@ -20,7 +20,7 @@ export default function ToursPage() {
       {/* Header */}
       
 
-      <div className={spacing.container.wide + " py-12 min-h-[80vh] flex flex-col justify-center"}>
+      <div className={spacing.container.wide + " py-8 md:py-12 min-h-[80vh] flex flex-col justify-center"}>
         {/* Hero секция */}
         <div className="text-center mb-12 animate-fade-in">
          
@@ -63,11 +63,11 @@ export default function ToursPage() {
             </div>
 
             {/* Мобильная версия - вертикальный список */}
-            <div className="md:hidden space-y-6 py-8 max-w-lg mx-auto">
+            <div className="md:hidden space-y-4 py-4">
               {tours.map((tour, index) => (
                 <div 
                   key={tour._id}
-                  className="animate-slide-up"
+                  className="animate-slide-up max-w-sm mx-auto"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <TourCard tour={{...tour, id: tour._id, name: tour.title}} onOpenDetails={handleTourClick} />
