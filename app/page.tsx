@@ -1,133 +1,75 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { typography, spacing } from '@/hooks/useDesignTokens'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-beige-50 to-white">
-      {/* Header */}
-      <header className="absolute top-0 left-0 right-0 z-50">
-        <nav className={spacing.container.wide + " py-6"}>
-          <div className="flex justify-between items-center">
-            <div className={typography.heading.subsection}>
-              Парк-отель
-            </div>
-            <div className="flex gap-8 items-center">
-              <Link href="/tours" className="text-neutral-600 hover:text-primary transition-colors">
-                Туры
-              </Link>
-              <Link href="/spaces" className="text-neutral-600 hover:text-primary transition-colors">
-                Номера
-              </Link>
-              <Link href="/tours" className="btn-primary text-sm">
-                Забронировать
-              </Link>
-            </div>
-          </div>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Декоративные элементы */}
-        <div className="absolute top-20 right-20 w-72 h-72 bg-pastel-peach rounded-full blur-3xl opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-pastel-mint rounded-full blur-3xl opacity-30 animate-pulse animation-delay-1000"></div>
-        
-        <div className={spacing.container.wide + " relative z-10"}>
-          <div className="text-center max-w-4xl mx-auto animate-fade-in">
-          
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/tours"
-                className="btn-primary text-lg px-8 py-4 inline-block"
-              >
-                Выбрать тур
-              </Link>
-              <Link
-                href="/spaces"
-                className="btn-outline text-lg px-8 py-4 inline-block"
-              >
-                Смотреть номера
-              </Link>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-beige-50 to-white flex items-center justify-center">
+      <div className={spacing.container.wide + " max-w-4xl mx-auto"}>
+        <div className="text-center mb-12">
+          <h1 className={typography.heading.section + " mb-4"}>
+            Парк-отель
+          </h1>
+          <p className={typography.body.large + " text-neutral-600"}>
+            Управление турами и номерами
+          </p>
         </div>
         
-        {/* Скролл индикатор */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <svg className="w-6 h-6 text-neutral-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-            <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-          </svg>
-        </div>
-      </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <Link
+            href="/tours"
+            className="bg-white hover:bg-neutral-50 border border-neutral-200 rounded-3xl p-12 text-center transition-all duration-200 hover:scale-105 hover:shadow-lg group"
+          >
+            <div className="w-16 h-16 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+            </div>
+            <h2 className={typography.heading.card + " mb-2"}>Туры</h2>
+            <p className={typography.body.base + " text-neutral-600"}>Просмотр всех туров</p>
+          </Link>
 
-      {/* Features Section */}
-      <section className="section-padding bg-white">
-        <div className={spacing.container.wide}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-3xl bg-gradient-to-br from-pastel-peach/20 to-transparent animate-slide-up">
-              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              </div>
-              <h3 className={typography.heading.card + " mb-2"}>Уютные номера</h3>
-              <p className={typography.body.base}>Комфортабельные номера с видом на природу</p>
+          <Link
+            href="/spaces"
+            className="bg-white hover:bg-neutral-50 border border-neutral-200 rounded-3xl p-12 text-center transition-all duration-200 hover:scale-105 hover:shadow-lg group"
+          >
+            <div className="w-16 h-16 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
             </div>
-            
-            <div className="text-center p-8 rounded-3xl bg-gradient-to-br from-pastel-mint/20 to-transparent animate-slide-up animation-delay-200">
-              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-              </div>
-              <h3 className={typography.heading.card + " mb-2"}>Активный отдых</h3>
-              <p className={typography.body.base}>Разнообразные туры и развлечения</p>
-            </div>
-            
-            <div className="text-center p-8 rounded-3xl bg-gradient-to-br from-pastel-lavender/20 to-transparent animate-slide-up animation-delay-400">
-              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-2xl flex items-center justify-center">
-                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <h3 className={typography.heading.card + " mb-2"}>Забота о гостях</h3>
-              <p className={typography.body.base}>Индивидуальный подход к каждому</p>
-            </div>
-          </div>
-        </div>
-      </section>
+            <h2 className={typography.heading.card + " mb-2"}>Номера</h2>
+            <p className={typography.body.base + " text-neutral-600"}>Просмотр всех номеров</p>
+          </Link>
 
-      {/* Footer */}
-      <footer className="bg-beige-100 py-8">
-        <div className={spacing.container.wide}>
-          <div className="flex flex-col sm:flex-row justify-between items-center">
-            <div className={typography.body.small + " mb-4 sm:mb-0"}>
-              © 2024 Парк-отель. Все права защищены.
+          <Link
+            href="/admin/tours"
+            className="bg-white hover:bg-neutral-50 border border-neutral-200 rounded-3xl p-12 text-center transition-all duration-200 hover:scale-105 hover:shadow-lg group"
+          >
+            <div className="w-16 h-16 mx-auto mb-6 bg-secondary/10 rounded-2xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+              <svg className="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
             </div>
-            <div className="flex gap-6">
-              <Link
-                href="/admin/tours"
-                className="text-neutral-500 hover:text-primary transition-colors text-sm"
-              >
-                Админка туров
-              </Link>
-              <Link
-                href="/admin/spaces"
-                className="text-neutral-500 hover:text-primary transition-colors text-sm"
-              >
-                Админка номеров
-              </Link>
-              <Link
-                href="/admin/design-tokens"
-                className="text-neutral-400 hover:text-primary transition-colors text-xs opacity-50 hover:opacity-100"
-              >
-                •
-              </Link>
+            <h2 className={typography.heading.card + " mb-2"}>Админка туров</h2>
+            <p className={typography.body.base + " text-neutral-600"}>Управление турами</p>
+          </Link>
+
+          <Link
+            href="/admin/spaces"
+            className="bg-white hover:bg-neutral-50 border border-neutral-200 rounded-3xl p-12 text-center transition-all duration-200 hover:scale-105 hover:shadow-lg group"
+          >
+            <div className="w-16 h-16 mx-auto mb-6 bg-secondary/10 rounded-2xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+              <svg className="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
             </div>
-          </div>
+            <h2 className={typography.heading.card + " mb-2"}>Админка номеров</h2>
+            <p className={typography.body.base + " text-neutral-600"}>Управление номерами</p>
+          </Link>
         </div>
-      </footer>
+      </div>
     </div>
   )
 }
