@@ -2,9 +2,10 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
-import { ChevronLeft, ChevronRight, Users, Maximize, MapPin, Wifi, Coffee, Car, Wind } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Users, Maximize, MapPin, Wifi, Coffee, Car, Wind, Info } from 'lucide-react'
 import { useFileUrl } from '@/hooks/useConvex'
 import { typography } from '@/hooks/useDesignTokens'
+import SpaceDescriptionModal from './SpaceDescriptionModal'
 
 interface SpaceCardProps {
   space: any // Convex space объект
@@ -55,7 +56,7 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   
   const imageIds = space.images || []
   const hasMultipleImages = imageIds.length > 1
@@ -133,18 +134,17 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
     'Кондиционер': Wind,
   }
 
-  // Обработчик клика на карточку
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Не разворачиваем, если клик по кнопкам навигации или другим интерактивным элементам
-    if ((e.target as HTMLElement).closest('button')) return
-    setIsExpanded(!isExpanded)
+  // Обработчик клика на кнопку "Подробнее"
+  const handleShowMore = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsModalOpen(true)
   }
 
   return (
-    <div 
-      className="card group hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full flex flex-col" 
-      onClick={handleCardClick}
-    >
+    <>
+      <div 
+        className="card group hover:scale-[1.02] transition-all duration-300 h-full flex flex-col"
+      >
       {/* Галерея изображений */}
       <div 
         className="relative h-48 bg-gradient-to-br from-beige-100 to-beige-200 group overflow-hidden"
@@ -218,12 +218,18 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
         
         {/* Описание */}
         <div className="mb-4">
-          <p className={`${typography.body.small} leading-relaxed transition-all duration-300 ${
-            isExpanded ? '' : 'line-clamp-2'
-          }`}>
+          <p className={`${typography.body.small} leading-relaxed line-clamp-2`}>
             {space.description}
-            {!isExpanded && space.description && space.description.length > 100 && '...'}
           </p>
+          {space.description && space.description.length > 100 && (
+            <button
+              onClick={handleShowMore}
+              className="text-primary hover:text-primary-dark text-sm font-medium mt-2 flex items-center gap-1 transition-colors"
+            >
+              <Info className="w-4 h-4" />
+              Подробнее
+            </button>
+          )}
         </div>
         
         {/* Характеристики */}
@@ -338,5 +344,14 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
         </div>
       </div>
     </div>
+    
+    {/* Модальное окно с полным описанием */}
+    <SpaceDescriptionModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      title={space.name}
+      description={space.description || 'Описание отсутствует'}
+    />
+    </>
   )
 }

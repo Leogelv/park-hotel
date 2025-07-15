@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, X, Plus, Trash2, Upload, Loader2, Image as ImageIcon, GripVertical, Users, Home, Bed } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -288,7 +289,18 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
       }
       
       const spaceData = {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        capacity: formData.capacity,
+        area_sqm: formData.area_sqm,
+        floor: formData.floor,
+        amenities: formData.amenities,
+        room_type: formData.room_type,
+        room_type_id: formData.room_type_id,
+        price_per_night: formData.price_per_night,
+        discount_percent: formData.discount_percent,
+        hourly_rate: formData.hourly_rate,
+        is_available: formData.is_available,
         images: uploadedImages
       }
       
@@ -328,9 +340,18 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
   return (
     <form onSubmit={handleSubmit} className="max-w-6xl mx-auto p-4 sm:p-8">
       <div className="bg-white rounded-2xl shadow-soft p-6 sm:p-8">
-        <h2 className={typography.heading.section + " mb-8"}>
-          {spaceId ? 'Редактировать номер' : 'Добавить номер'}
-        </h2>
+        <div className="flex items-center justify-between mb-8">
+          <h2 className={typography.heading.section}>
+            {spaceId ? 'Редактировать номер' : 'Добавить номер'}
+          </h2>
+          <Link 
+            href="/admin/spaces" 
+            className="text-neutral-600 hover:text-primary transition-colors flex items-center gap-2"
+          >
+            <X className="w-5 h-5" />
+            Вернуться к списку
+          </Link>
+        </div>
         
         {/* Основная информация */}
         <div className="space-y-6 mb-8">

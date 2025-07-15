@@ -4,13 +4,15 @@ import { useState } from 'react'
 import Link from 'next/link'
 import SpaceCard from '@/components/SpaceCardImproved'
 import MobileCategorySelector from '@/components/MobileCategorySelector'
-import { useSpaces, useRoomTypes } from '@/hooks/useConvex'
+import { useSpaces, useSpaceTypes } from '@/hooks/useConvex'
+import { useQuery } from 'convex/react'
+import { api } from '@/convex/_generated/api'
 import { typography, spacing } from '@/hooks/useDesignTokens'
 
 export default function SpacesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined)
   const spaces = useSpaces(true, selectedCategory) // только доступные, с фильтром по категории
-  const roomTypes = useRoomTypes()
+  const spaceTypes = useQuery(api.spaceTypes.getAllSpaceTypes, { onlyActive: true })
 
   // Подготавливаем категории для мобильного селектора
   const categoryOptions = [
@@ -19,25 +21,11 @@ export default function SpacesPage() {
       label: 'Все номера', 
       count: spaces?.length || 0 
     },
-    ...(roomTypes || []).map(type => {
-      const getTypeLabel = (roomType: string): string => {
-        const labels: { [key: string]: string } = {
-          'hotel_room': 'Номера в отеле',
-          'bungalow': 'Бунгало',
-          'scandinavian_house': 'Скандинавские дома',
-          'chalet': 'Шале',
-          'townhouse': 'Таунхаусы',
-          'suite': 'Люксы',
-          'standard': 'Стандарт',
-          'deluxe': 'Делюкс'
-        }
-        return labels[roomType] || roomType
-      }
-      
+    ...(spaceTypes || []).map(type => {
       return {
-        value: type,
-        label: getTypeLabel(type),
-        count: spaces?.filter(s => s.room_type === type).length || 0
+        value: type.slug,
+        label: type.name,
+        count: spaces?.filter(s => s.room_type === type.slug).length || 0
       }
     })
   ]
@@ -71,7 +59,7 @@ export default function SpacesPage() {
         ) : (
           <>
             {/* Категории - десктоп и мобильная версия */}
-            {roomTypes && roomTypes.length > 0 && (
+            {spaceTypes && spaceTypes.length > 0 && (
               <>
                 {/* Мобильный селектор */}
                 <div className="block md:hidden mb-6">
@@ -95,35 +83,20 @@ export default function SpacesPage() {
                     >
                       Все номера
                     </button>
-                    {roomTypes
-                      .sort()
+                    {spaceTypes
+                      .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
                       .map((type) => {
-                        // Функция для получения читабельного названия типа номера
-                        const getTypeLabel = (roomType: string): string => {
-                          const labels: { [key: string]: string } = {
-                            'hotel_room': 'Номера в отеле',
-                            'bungalow': 'Бунгало',
-                            'scandinavian_house': 'Скандинавские дома',
-                            'chalet': 'Шале',
-                            'townhouse': 'Таунхаусы',
-                            'suite': 'Люксы',
-                            'standard': 'Стандарт',
-                            'deluxe': 'Делюкс'
-                          }
-                          return labels[roomType] || roomType
-                        }
-
                         return (
                           <button
-                            key={type}
-                            onClick={() => setSelectedCategory(type)}
+                            key={type._id}
+                            onClick={() => setSelectedCategory(type.slug)}
                             className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                              selectedCategory === type
+                              selectedCategory === type.slug
                                 ? 'bg-primary text-white shadow-soft'
                                 : 'bg-white text-neutral-600 border border-neutral-200 hover:border-primary hover:text-primary'
                             }`}
                           >
-                            {getTypeLabel(type)}
+                            {type.name}
                           </button>
                         )
                       })}

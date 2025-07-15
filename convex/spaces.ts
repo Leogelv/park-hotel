@@ -75,8 +75,10 @@ export const updateSpace = mutation({
     floor: v.optional(v.number()),
     amenities: v.optional(v.array(v.string())),
     room_type: v.optional(v.string()),
+    room_type_id: v.optional(v.id("space_types")),
     price_per_night: v.optional(v.float64()),
     hourly_rate: v.optional(v.float64()),
+    discount_percent: v.optional(v.float64()),
     images: v.optional(v.array(v.string())),
     is_available: v.optional(v.boolean())
   },

@@ -34,7 +34,7 @@ export const createSpaceType = mutation({
   args: {
     name: v.string(),
     slug: v.string(),
-    display_name: v.string(),
+    display_name: v.optional(v.string()),
     is_active: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
@@ -55,7 +55,7 @@ export const createSpaceType = mutation({
       type_id: maxTypeId + 1,
       name: args.name,
       slug: args.slug,
-      display_name: args.display_name,
+      display_name: args.display_name || args.name,
       order_index: maxOrderIndex + 1,
       is_active: args.is_active ?? true,
       created_at: now,
