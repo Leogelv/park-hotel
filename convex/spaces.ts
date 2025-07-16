@@ -18,11 +18,25 @@ export const getAllSpaces = query({
     
     const spaces = await query.collect();
     
+    // Получаем данные о типах для каждого space
+    const spacesWithTypes = await Promise.all(
+      spaces.map(async (space) => {
+        let spaceType = null;
+        if (space.room_type_id) {
+          spaceType = await ctx.db.get(space.room_type_id);
+        }
+        return {
+          ...space,
+          spaceType
+        };
+      })
+    );
+    
     if (args.roomType) {
-      return spaces.filter(space => space.room_type === args.roomType);
+      return spacesWithTypes.filter(space => space.room_type === args.roomType);
     }
     
-    return spaces;
+    return spacesWithTypes;
   },
 });
 
@@ -30,7 +44,18 @@ export const getAllSpaces = query({
 export const getSpaceById = query({
   args: { id: v.id("spaces") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const space = await ctx.db.get(args.id);
+    if (!space) return null;
+    
+    let spaceType = null;
+    if (space.room_type_id) {
+      spaceType = await ctx.db.get(space.room_type_id);
+    }
+    
+    return {
+      ...space,
+      spaceType
+    };
   },
 });
 

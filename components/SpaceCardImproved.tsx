@@ -8,7 +8,13 @@ import { typography } from '@/hooks/useDesignTokens'
 import SpaceDescriptionModal from './SpaceDescriptionModal'
 
 interface SpaceCardProps {
-  space: any // Convex space объект
+  space: any & {
+    spaceType?: {
+      name: string;
+      display_name?: string;
+      slug: string;
+    }
+  }
 }
 
 // Функция для получения читабельного названия типа номера
@@ -208,7 +214,7 @@ export default function SpaceCardImproved({ space }: SpaceCardProps) {
         
         {/* Тип номера */}
         <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-primary rounded-full px-4 py-2 text-sm font-semibold shadow-medium">
-          {getRoomTypeLabel(space.room_type)}
+          {space.spaceType?.display_name || space.spaceType?.name || getRoomTypeLabel(space.room_type)}
         </div>
       </div>
 

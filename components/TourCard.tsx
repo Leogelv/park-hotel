@@ -1,11 +1,12 @@
 'use client'
 
 import Image from 'next/image'
-import { Eye, Check, X, Calendar, Users, Mountain, MapPin } from 'lucide-react'
+import { Eye, Check, X, Calendar, Users, Mountain, MapPin, Info } from 'lucide-react'
 import { useState } from 'react'
 import { useFileUrl, useTourAvailability } from '@/hooks/useConvex'
 import { Doc, Id } from '@/convex/_generated/dataModel'
 import { typography } from '@/hooks/useDesignTokens'
+import TourDescriptionModal from './TourDescriptionModal'
 
 interface TourCardProps {
   tour: Doc<"tours"> & {
@@ -30,21 +31,20 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
     date.start_date > Date.now() && date.is_available
   ).sort((a, b) => a.start_date - b.start_date).slice(0, 2)
   
-  // Состояние для разворачивания описания
-  const [isExpanded, setIsExpanded] = useState(false)
+  // Состояние для модального окна
+  const [isModalOpen, setIsModalOpen] = useState(false)
   
-  // Обработчик клика на карточку
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Не разворачиваем, если клик по кнопке
-    if ((e.target as HTMLElement).closest('button')) return
-    setIsExpanded(!isExpanded)
+  // Обработчик клика на кнопку "Подробнее"
+  const handleShowMore = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsModalOpen(true)
   }
 
   return (
-    <div 
-      className="card group hover:scale-[1.02] transition-all duration-300 cursor-pointer w-full max-w-sm" 
-      onClick={handleCardClick}
-    >
+    <>
+      <div 
+        className="card group hover:scale-[1.02] transition-all duration-300 w-full max-w-sm"
+      >
       {/* Изображение */}
       <div className="relative h-64 bg-gradient-to-br from-beige-100 to-beige-200 overflow-hidden">
         {imageUrl ? (
@@ -80,12 +80,18 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
         
         {/* Описание */}
         <div className="mb-4">
-          <p className={`${typography.body.small} leading-relaxed transition-all duration-300 ${
-            isExpanded ? '' : 'line-clamp-2'
-          }`}>
+          <p className={`${typography.body.small} leading-relaxed line-clamp-2`}>
             {tour.description}
-            {!isExpanded && tour.description && tour.description.length > 100 && '...'}
           </p>
+          {tour.description && tour.description.length > 100 && (
+            <button
+              onClick={handleShowMore}
+              className="text-primary hover:text-primary-dark text-sm font-medium mt-2 flex items-center gap-1 transition-colors"
+            >
+              <Info className="w-4 h-4" />
+              Подробнее
+            </button>
+          )}
         </div>
         
         
@@ -168,5 +174,14 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
         </button>
       </div>
     </div>
+    
+    {/* Модальное окно с полным описанием */}
+    <TourDescriptionModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      title={tour.title}
+      description={tour.description || 'Описание отсутствует'}
+    />
+    </>
   )
 }
