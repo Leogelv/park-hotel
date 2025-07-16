@@ -17,14 +17,14 @@ function SpaceImagePreview({ storageId }: { storageId?: string }) {
   
   if (!imageUrl) {
     return (
-      <div className="w-16 h-16 bg-neutral-100 rounded-lg flex items-center justify-center">
-        <ImageIcon className="w-6 h-6 text-neutral-400" />
+      <div className="w-12 h-12 bg-neutral-100 rounded flex items-center justify-center">
+        <ImageIcon className="w-5 h-5 text-neutral-400" />
       </div>
     )
   }
   
   return (
-    <div className="relative w-16 h-16 rounded-lg overflow-hidden">
+    <div className="relative w-12 h-12 rounded overflow-hidden">
       <Image
         src={imageUrl}
         alt="Space preview"
@@ -207,8 +207,8 @@ export default function AdminSpacesPage() {
       <div className={spacing.container.default + " py-8"}>
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-4">
-            <Link href="/admin" className="text-neutral-600 hover:text-primary transition-colors">
-              ← Назад в админку
+            <Link href="/" className="text-neutral-600 hover:text-primary transition-colors">
+              ← На главную
             </Link>
             <h1 className={typography.heading.page}>Управление номерами</h1>
           </div>
@@ -289,28 +289,28 @@ export default function AdminSpacesPage() {
         ) : (
           <div className="bg-white rounded-2xl shadow-soft overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-sm">
                 <thead className="bg-gradient-to-r from-beige-50 to-beige-100">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Фото
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Название
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Тип
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Параметры
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Цены
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wider">
                       Статус
                     </th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-secondary uppercase tracking-wider">
+                    <th className="px-3 py-3 text-right text-xs font-semibold text-secondary uppercase tracking-wider">
                       Действия
                     </th>
                   </tr>
@@ -318,98 +318,98 @@ export default function AdminSpacesPage() {
                 <tbody className="divide-y divide-neutral-100">
                   {filteredSpaces!.map((space) => (
                     <tr key={space._id} className="hover:bg-beige-50/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <Link href={`/admin/spaces/${space._id}`} className="block">
                           <SpaceImagePreview storageId={space.images?.[0]} />
                         </Link>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2">
                         <div>
-                          <div className="text-neutral-800 font-semibold">
+                          <div className="text-neutral-800 font-semibold text-sm">
                             <EditableField
                               value={space.name}
                               onSave={(value) => handleUpdateField(space._id, 'name', value)}
                             />
                           </div>
                           {space.images && space.images.length > 0 && (
-                            <div className="text-sm text-neutral-600 mt-1">
+                            <div className="text-xs text-neutral-600 mt-0.5">
                               {space.images.length} фото
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <EditableRoomType
                           value={space.room_type}
                           onSave={(value) => handleUpdateField(space._id, 'room_type', value)}
                         />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-primary flex-shrink-0" />
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="space-y-0.5 text-xs">
+                          <div className="flex items-center gap-1">
+                            <Users className="w-3 h-3 text-primary flex-shrink-0" />
                             <EditableField
                               value={space.capacity}
                               onSave={(value) => handleUpdateField(space._id, 'capacity', value)}
                               type="number"
                               suffix=" чел."
-                              className="w-16"
+                              className="w-12 text-xs"
                             />
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Home className="w-4 h-4 text-primary flex-shrink-0" />
+                          <div className="flex items-center gap-1">
+                            <Home className="w-3 h-3 text-primary flex-shrink-0" />
                             <EditableField
                               value={space.area_sqm}
                               onSave={(value) => handleUpdateField(space._id, 'area_sqm', value)}
                               type="number"
                               suffix=" м²"
-                              className="w-20"
+                              className="w-14 text-xs"
                             />
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="space-y-1">
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="space-y-0.5 text-xs">
                           <div className="flex items-center gap-1">
-                            <DollarSign className="w-4 h-4 text-primary flex-shrink-0" />
+                            <DollarSign className="w-3 h-3 text-primary flex-shrink-0" />
                             <EditableField
                               value={space.price_per_night || 0}
                               onSave={(value) => handleUpdateField(space._id, 'price_per_night', value)}
                               type="number"
-                              suffix=" ₽/ночь"
-                              className="w-24"
+                              suffix=" ₽"
+                              className="w-20 text-xs"
                             />
                           </div>
                           {space.discount_percent && space.discount_percent > 0 && (
                             <div className="flex items-center gap-1">
-                              <span className="text-xs text-green-600">Скидка:</span>
+                              <span className="text-[10px] text-green-600">-</span>
                               <EditableField
                                 value={space.discount_percent}
                                 onSave={(value) => handleUpdateField(space._id, 'discount_percent', value)}
                                 type="number"
                                 suffix="%"
-                                className="w-20"
+                                className="w-12 text-xs"
                               />
                             </div>
                           )}
                           {space.hourly_rate && space.hourly_rate > 0 && (
                             <div className="flex items-center gap-1">
-                              <span className={typography.body.caption}>Час:</span>
+                              <span className="text-[10px]">час:</span>
                               <EditableField
                                 value={space.hourly_rate}
                                 onSave={(value) => handleUpdateField(space._id, 'hourly_rate', value)}
                                 type="number"
                                 suffix=" ₽"
-                                className="w-20"
+                                className="w-16 text-xs"
                               />
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-2 whitespace-nowrap">
                         <button
                           onClick={() => handleToggleAvailable(space._id, space.is_available)}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-colors ${
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium transition-colors ${
                             space.is_available
                               ? 'bg-pastel-mint text-neutral-700 hover:bg-pastel-mint/80'
                               : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
@@ -417,32 +417,32 @@ export default function AdminSpacesPage() {
                         >
                           {space.is_available ? (
                             <>
-                              <Eye className="w-3.5 h-3.5" />
-                              Доступен
+                              <Eye className="w-3 h-3" />
+                              <span className="hidden lg:inline">Доступен</span>
                             </>
                           ) : (
                             <>
-                              <EyeOff className="w-3.5 h-3.5" />
-                              Недоступен
+                              <EyeOff className="w-3 h-3" />
+                              <span className="hidden lg:inline">Недоступен</span>
                             </>
                           )}
                         </button>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex justify-end gap-3">
+                      <td className="px-3 py-2 whitespace-nowrap text-right">
+                        <div className="flex justify-end gap-1">
                           <Link
                             href={`/admin/spaces/${space._id}`}
-                            className="text-primary hover:text-primary-dark transition-colors p-2 hover:bg-beige-100 rounded-lg"
+                            className="text-primary hover:text-primary-dark transition-colors p-1 hover:bg-beige-100 rounded"
                             title="Редактировать детально"
                           >
-                            <Edit2 className="w-5 h-5" />
+                            <Edit2 className="w-4 h-4" />
                           </Link>
                           <button
                             onClick={() => handleDeleteSpace(space._id)}
-                            className="text-red-500 hover:text-red-700 transition-colors p-2 hover:bg-red-50 rounded-lg"
+                            className="text-red-500 hover:text-red-700 transition-colors p-1 hover:bg-red-50 rounded"
                             title="Удалить"
                           >
-                            <Trash2 className="w-5 h-5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

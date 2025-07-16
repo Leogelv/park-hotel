@@ -340,17 +340,16 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
   return (
     <form onSubmit={handleSubmit} className="max-w-6xl mx-auto p-4 sm:p-8">
       <div className="bg-white rounded-2xl shadow-soft p-6 sm:p-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8">
+          <Link 
+            href="/admin/spaces" 
+            className="text-neutral-600 hover:text-primary transition-colors inline-flex items-center gap-2 mb-4"
+          >
+            ← Назад к списку номеров
+          </Link>
           <h2 className={typography.heading.section}>
             {spaceId ? 'Редактировать номер' : 'Добавить номер'}
           </h2>
-          <Link 
-            href="/admin/spaces" 
-            className="text-neutral-600 hover:text-primary transition-colors flex items-center gap-2"
-          >
-            <X className="w-5 h-5" />
-            Вернуться к списку
-          </Link>
         </div>
         
         {/* Основная информация */}
