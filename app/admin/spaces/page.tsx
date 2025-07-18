@@ -206,12 +206,7 @@ export default function AdminSpacesPage() {
     <div className="min-h-screen bg-gradient-to-br from-beige-50 to-white">
       <div className={spacing.container.default + " py-8"}>
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-neutral-600 hover:text-primary transition-colors">
-              ← На главную
-            </Link>
-            <h1 className={typography.heading.page}>Управление номерами</h1>
-          </div>
+          <h1 className={typography.heading.page}>Управление номерами</h1>
           <div className="flex gap-3">
             <button
               onClick={() => setIsCategoryModalOpen(true)}

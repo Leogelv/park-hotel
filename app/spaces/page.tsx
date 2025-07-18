@@ -21,13 +21,19 @@ export default function SpacesPage() {
       label: 'Все номера', 
       count: spaces?.length || 0 
     },
-    ...(spaceTypes || []).map(type => {
-      return {
-        value: type.slug,
-        label: type.name,
-        count: spaces?.filter(s => s.room_type === type.slug).length || 0
-      }
-    })
+    ...(spaceTypes || [])
+      .filter(type => {
+        // Показываем только категории с номерами
+        const count = spaces?.filter(s => s.room_type === type.slug).length || 0
+        return count > 0
+      })
+      .map(type => {
+        return {
+          value: type.slug,
+          label: type.name,
+          count: spaces?.filter(s => s.room_type === type.slug).length || 0
+        }
+      })
   ]
 
   return (
@@ -52,9 +58,6 @@ export default function SpacesPage() {
               </svg>
             </div>
             <p className={typography.body.large + " mb-4"}>Номера пока не добавлены</p>
-            <Link href="/" className="btn-outline">
-              Вернуться на главную
-            </Link>
           </div>
         ) : (
           <>
@@ -84,6 +87,11 @@ export default function SpacesPage() {
                       Все номера
                     </button>
                     {spaceTypes
+                      .filter(type => {
+                        // Показываем только категории с номерами
+                        const count = spaces?.filter(s => s.room_type === type.slug).length || 0
+                        return count > 0
+                      })
                       .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
                       .map((type) => {
                         return (
