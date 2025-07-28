@@ -150,7 +150,6 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
     room_type_id: undefined as Id<"space_types"> | undefined,
     price_per_night: 0,
     discount_percent: 0,
-    hourly_rate: 0,
     is_available: true
   })
   
@@ -189,7 +188,6 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
         room_type_id: space.room_type_id,
         price_per_night: space.price_per_night || 0,
         discount_percent: space.discount_percent || 0,
-        hourly_rate: space.hourly_rate || 0,
         is_available: space.is_available
       })
       
@@ -299,7 +297,6 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
         room_type_id: formData.room_type_id,
         price_per_night: formData.price_per_night,
         discount_percent: formData.discount_percent,
-        hourly_rate: formData.hourly_rate,
         is_available: formData.is_available,
         images: uploadedImages
       }
@@ -386,6 +383,7 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
                 }}
                 className={"w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent " + forms.select}
                 disabled={!spaceTypes || spaceTypes.length === 0}
+                required
               >
                 <option value="">Выберите тип номера</option>
                 {spaceTypes?.map(type => (
@@ -502,19 +500,6 @@ export default function SpaceFormConvex({ spaceId }: SpaceFormProps) {
                 min="0"
                 max="100"
                 placeholder="0"
-              />
-            </div>
-            
-            <div>
-              <label className={typography.body.small + " block font-medium mb-2"}>
-                Почасовая оплата (₽)
-              </label>
-              <input
-                type="number"
-                value={formData.hourly_rate}
-                onChange={(e) => setFormData({ ...formData, hourly_rate: Number(e.target.value) })}
-                className={"w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent " + forms.input}
-                min="0"
               />
             </div>
           </div>

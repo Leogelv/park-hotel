@@ -387,18 +387,6 @@ export default function AdminSpacesPage() {
                               />
                             </div>
                           )}
-                          {space.hourly_rate && space.hourly_rate > 0 && (
-                            <div className="flex items-center gap-1">
-                              <span className="text-[10px]">час:</span>
-                              <EditableField
-                                value={space.hourly_rate}
-                                onSave={(value) => handleUpdateField(space._id, 'hourly_rate', value)}
-                                type="number"
-                                suffix=" ₽"
-                                className="w-16 text-xs"
-                              />
-                            </div>
-                          )}
                         </div>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
