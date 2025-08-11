@@ -262,7 +262,7 @@ export default function TourDetailPage() {
                             }
                             const Icon = activityType.icon
                             
-                            const storageImageUrl = useFileUrl(activity.image)
+                            const storageImageUrl = useFileUrl(activity.image || null)
                             const imageUrl = storageImageUrl || activity.image_url
                             
                             return (
