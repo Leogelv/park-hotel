@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { typography, forms } from '@/hooks/useDesignTokens'
 import { Plus, Trash2, Upload, Loader2, GripVertical, X, Clock } from 'lucide-react'
 import Image from 'next/image'
@@ -86,6 +87,9 @@ function SortableActivity({
   typography: any
   forms: any
 }) {
+  // Локальное состояние для полей чтобы избежать лагов при вводе
+  const [localName, setLocalName] = useState(activity.name)
+  const [localDescription, setLocalDescription] = useState(activity.description)
   const {
     attributes,
     listeners,
@@ -129,8 +133,9 @@ function SortableActivity({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
-              value={activity.name}
-              onChange={(e) => onUpdate('name', e.target.value)}
+              value={localName}
+              onChange={(e) => setLocalName(e.target.value)}
+              onBlur={() => onUpdate('name', localName)}
               placeholder="Название активности"
               className={"px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
             />
@@ -150,8 +155,9 @@ function SortableActivity({
           
           {/* Описание */}
           <textarea
-            value={activity.description}
-            onChange={(e) => onUpdate('description', e.target.value)}
+            value={localDescription}
+            onChange={(e) => setLocalDescription(e.target.value)}
+            onBlur={() => onUpdate('description', localDescription)}
             placeholder="Описание активности"
             rows={2}
             className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.textarea}

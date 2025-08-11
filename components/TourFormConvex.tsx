@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, X, Loader2 } from 'lucide-react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
 import { useFileUrl } from '@/hooks/useConvex'
+import { useDebounce } from '@/hooks/useDebounce'
 import { typography, spacing, forms } from '@/hooks/useDesignTokens'
 
 // Импортируем новые компоненты
@@ -75,6 +76,9 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
   const [extraServices, setExtraServices] = useState<ExtraService[]>([])
   const [selectedActivityImages, setSelectedActivityImages] = useState<{ [key: string]: File }>({})
   const [autoSaving, setAutoSaving] = useState(false)
+  
+  // Добавляем debounce для дней чтобы не сохранять при каждом нажатии клавиши
+  const debouncedDays = useDebounce(days, 2000) // 2 секунды задержки
   
   // Состояние для отслеживания изменений
   const [initialFormData, setInitialFormData] = useState(formData)
@@ -162,15 +166,16 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
     }
   }
   
-  // Функция для сохранения поля при потере фокуса
+  // Функция для сохранения поля при потере фокуса - ОТКЛЮЧЕНА для оптимизации
   const saveFieldOnBlur = async (field: string, value: any) => {
-    if (!tourId || !tour) return
-    
-    // Проверяем, изменилось ли значение
-    const currentValue = (initialFormData as any)[field]
-    if (currentValue === value) return
-    
-    await saveDraftChanges({ [field]: value })
+    // ОТКЛЮЧЕНО: автосохранение при blur вызывает лаги
+    // if (!tourId || !tour) return
+    // 
+    // // Проверяем, изменилось ли значение
+    // const currentValue = (initialFormData as any)[field]
+    // if (currentValue === value) return
+    // 
+    // await saveDraftChanges({ [field]: value })
   }
   
   // Функция для проверки изменений в форме

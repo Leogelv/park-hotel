@@ -109,7 +109,7 @@ export default function TourDays({
   typography,
   forms
 }: TourDaysProps) {
-  const [viewMode, setViewMode] = useState<'all' | 'single'>('all')
+  const [viewMode, setViewMode] = useState<'all' | 'single'>('single') // Изменено на single по умолчанию чтобы избежать лагов
   const [selectedDayIndex, setSelectedDayIndex] = useState(0)
 
   const sensors = useSensors(
