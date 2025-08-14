@@ -19,6 +19,69 @@ const activityTypes: Record<string, { label: string; color: string; icon: any }>
   'вечернее мероприятие': { label: 'Вечер', color: 'bg-indigo-500', icon: Mountain }
 }
 
+// Компонент для отдельной активности чтобы не нарушать правила хуков
+function ActivityCard({ activity }: { activity: any }) {
+  const activityType = activityTypes[activity.type] || { 
+    label: activity.type, 
+    color: 'bg-neutral-500',
+    icon: Coffee 
+  }
+  const Icon = activityType.icon
+  
+  const storageImageUrl = useFileUrl(activity.image || null)
+  const imageUrl = storageImageUrl || activity.image_url
+  
+  return (
+    <div className="bg-white rounded-lg shadow-soft overflow-hidden flex-shrink-0 w-64">
+      {/* Изображение активности или иконка */}
+      {imageUrl ? (
+        <div className="relative w-full h-32 overflow-hidden">
+          <Image
+            src={imageUrl}
+            alt={activity.name}
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        </div>
+      ) : (
+        <div className={`w-full h-32 ${activityType.color} flex items-center justify-center`}>
+          <Icon className="w-12 h-12 text-white opacity-90" />
+        </div>
+      )}
+      
+      {/* Контент активности */}
+      <div className="p-3">
+        <div className="flex items-start gap-2 mb-2">
+          <div className={`w-6 h-6 ${activityType.color} rounded flex items-center justify-center text-white flex-shrink-0`}>
+            <Icon className="w-3 h-3" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h5 className="text-neutral-800 font-semibold text-sm mb-1 line-clamp-2">{activity.name}</h5>
+            {(activity.time_start || activity.time_end) && (
+              <p className="text-xs text-neutral-500">
+                {activity.time_start && activity.time_end 
+                  ? `${activity.time_start} - ${activity.time_end}`
+                  : activity.time_start || activity.time_end
+                }
+              </p>
+            )}
+          </div>
+        </div>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${activityType.color} text-white inline-block mb-2`}>
+          {activityType.label}
+        </span>
+        <p className="text-xs text-neutral-600 mb-2 line-clamp-2">{activity.description}</p>
+        {!activity.is_included && activity.price && (
+          <p className="text-xs text-orange-600 font-medium">
+            Доп: {activity.price.toLocaleString('ru-RU')} ₽
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 
 export default function TourDetailPage() {
   const params = useParams()
@@ -254,67 +317,9 @@ export default function TourDetailPage() {
                       <h4 className={typography.heading.card}>Активности дня</h4>
                       <div className="overflow-x-auto pb-2">
                         <div className="flex gap-3 w-max">
-                          {tour.days[selectedDayIndex].activities?.map((activity, index) => {
-                            const activityType = activityTypes[activity.type] || { 
-                              label: activity.type, 
-                              color: 'bg-neutral-500',
-                              icon: Coffee 
-                            }
-                            const Icon = activityType.icon
-                            
-                            const storageImageUrl = useFileUrl(activity.image || null)
-                            const imageUrl = storageImageUrl || activity.image_url
-                            
-                            return (
-                              <div key={activity._id} className="bg-white rounded-lg shadow-soft overflow-hidden flex-shrink-0 w-64">
-                                {/* Изображение активности или иконка */}
-                                {imageUrl ? (
-                                  <div className="relative w-full h-32 overflow-hidden">
-                                    <Image
-                                      src={imageUrl}
-                                      alt={activity.name}
-                                      fill
-                                      className="object-cover"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                                  </div>
-                                ) : (
-                                  <div className={`w-full h-32 ${activityType.color} flex items-center justify-center`}>
-                                    <Icon className="w-12 h-12 text-white opacity-90" />
-                                  </div>
-                                )}
-                                
-                                {/* Контент активности */}
-                                <div className="p-3">
-                                  <div className="flex items-start gap-2 mb-2">
-                                    <div className={`w-6 h-6 ${activityType.color} rounded flex items-center justify-center text-white flex-shrink-0`}>
-                                      <Icon className="w-3 h-3" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <h5 className="text-neutral-800 font-semibold text-sm mb-1 line-clamp-2">{activity.name}</h5>
-                                      {(activity.time_start || activity.time_end) && (
-                                        <p className="text-xs text-neutral-500">
-                                          {activity.time_start && activity.time_end 
-                                            ? `${activity.time_start} - ${activity.time_end}`
-                                            : activity.time_start || activity.time_end
-                                          }
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <span className={`px-2 py-1 rounded text-xs font-medium ${activityType.color} text-white inline-block mb-2`}>
-                                    {activityType.label}
-                                  </span>
-                                  <p className="text-xs text-neutral-600 mb-2 line-clamp-2">{activity.description}</p>
-                                  {!activity.is_included && activity.price && (
-                                    <p className="text-xs text-orange-600 font-medium">
-                                      Доп: {activity.price.toLocaleString('ru-RU')} ₽
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            )
-                          })}
+                          {tour.days[selectedDayIndex].activities?.map((activity) => (
+                            <ActivityCard key={activity._id} activity={activity} />
+                          ))}
                         </div>
                       </div>
                     </div>
