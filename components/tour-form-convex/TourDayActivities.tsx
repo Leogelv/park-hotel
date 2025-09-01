@@ -59,6 +59,24 @@ const activityTypes = [
   { value: 'вечернее мероприятие', label: 'Вечернее мероприятие', color: 'bg-indigo-500' }
 ]
 
+// Wrapper компонент для вызова хука вне map
+function SortableActivityWrapper(props: {
+  activity: Activity
+  activityKey: string
+  selectedImage?: File
+  uploading: boolean
+  onUpdate: (field: keyof Activity, value: any) => void
+  onRemove: () => void
+  onImageSelect: (e?: any, dayNumber?: number, activityOrder?: number) => void
+  onImageRemove: () => void
+  activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
+  typography: any
+  forms: any
+}) {
+  const imageUrl = useFileUrl(props.activity.image || null)
+  return <SortableActivity {...props} imageUrl={imageUrl ?? null} />
+}
+
 // Компонент для сортируемой активности
 function SortableActivity({ 
   activity,
@@ -420,14 +438,12 @@ export default function TourDayActivities({
           >
             {activities.map((activity, index) => {
               const activityKey = `${dayNumber}-${activity.order_number}`
-              const imageUrl = useFileUrl(activity.image || null)
               
               return (
-                <SortableActivity
+                <SortableActivityWrapper
                   key={activity._id || activityKey}
                   activity={activity}
                   activityKey={activityKey}
-                  imageUrl={imageUrl ?? null}
                   selectedImage={selectedActivityImages[activityKey]}
                   uploading={uploadingActivity === activityKey}
                   onUpdate={(field, value) => updateActivity(index, field, value)}
