@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { typography, forms } from '@/hooks/useDesignTokens'
 import { Plus, Trash2, Home, Car, Footprints, ChevronLeft, ChevronRight, Grid, Layers } from 'lucide-react'
 import {
@@ -179,94 +179,130 @@ export default function TourDays({
     }
   }
 
-  // Компонент для отображения одного дня
-  const renderDay = (day: TourDay, index: number, isFullView: boolean = true) => (
-    <div key={day._id || `day-${day.day_number}`} className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h3 className={typography.heading.card}>
-            День {day.day_number}
-          </h3>
-          {viewMode === 'all' && (
+  // Компонент дня с локальным состоянием для исправления лагов
+  const DayContent = ({ day, index, isFullView = true, showDayNumberInput = false }: { 
+    day: TourDay, 
+    index: number, 
+    isFullView?: boolean,
+    showDayNumberInput?: boolean 
+  }) => {
+    // Локальное состояние для инпутов чтобы избежать лагов
+    const [localAccommodation, setLocalAccommodation] = useState(day.accommodation || '')
+    const [localAutoDistance, setLocalAutoDistance] = useState(day.auto_distance_km?.toString() || '')
+    const [localWalkDistance, setLocalWalkDistance] = useState(day.walk_distance_km?.toString() || '')
+    const [localDayNumber, setLocalDayNumber] = useState(day.day_number.toString())
+    
+    // Синхронизация при изменении пропсов
+    useEffect(() => {
+      setLocalAccommodation(day.accommodation || '')
+      setLocalAutoDistance(day.auto_distance_km?.toString() || '')
+      setLocalWalkDistance(day.walk_distance_km?.toString() || '')
+      setLocalDayNumber(day.day_number.toString())
+    }, [day.accommodation, day.auto_distance_km, day.walk_distance_km, day.day_number])
+    
+    return (
+      <div key={day._id || `day-${day.day_number}`} className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h3 className={typography.heading.card}>
+              День {day.day_number}
+            </h3>
+            {showDayNumberInput && (
+              <input
+                type="number"
+                value={localDayNumber}
+                onChange={(e) => setLocalDayNumber(e.target.value)}
+                onBlur={() => changeDayNumber(index, Number(localDayNumber))}
+                className="w-16 px-2 py-1 border border-neutral-200 rounded-lg text-center"
+                min="1"
+                max={days.length}
+              />
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => removeDay(index)}
+            className="text-red-600 hover:text-red-800"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className={typography.body.small + " block mb-2"}>
+              <Home className="w-4 h-4 inline mr-1" />
+              Размещение
+            </label>
+            <input
+              type="text"
+              value={localAccommodation}
+              onChange={(e) => setLocalAccommodation(e.target.value)}
+              onBlur={() => updateDay(index, { accommodation: localAccommodation })}
+              placeholder="Где ночуем"
+              className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
+            />
+          </div>
+          
+          <div>
+            <label className={typography.body.small + " block mb-2"}>
+              <Car className="w-4 h-4 inline mr-1" />
+              На авто (км)
+            </label>
             <input
               type="number"
-              value={day.day_number}
-              onChange={(e) => changeDayNumber(index, Number(e.target.value))}
-              className="w-16 px-2 py-1 border border-neutral-200 rounded-lg text-center"
-              min="1"
-              max={days.length}
+              value={localAutoDistance}
+              onChange={(e) => setLocalAutoDistance(e.target.value)}
+              onBlur={() => {
+                const value = localAutoDistance ? Number(localAutoDistance) : undefined
+                updateDay(index, { auto_distance_km: value })
+              }}
+              placeholder="0"
+              className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
             />
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={() => removeDay(index)}
-          className="text-red-600 hover:text-red-800"
-        >
-          <Trash2 className="w-5 h-5" />
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className={typography.body.small + " block mb-2"}>
-            <Home className="w-4 h-4 inline mr-1" />
-            Размещение
-          </label>
-          <input
-            type="text"
-            value={day.accommodation || ''}
-            onChange={(e) => updateDay(index, { accommodation: e.target.value })}
-            placeholder="Где ночуем"
-            className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
-          />
+          </div>
+          
+          <div>
+            <label className={typography.body.small + " block mb-2"}>
+              <Footprints className="w-4 h-4 inline mr-1" />
+              Пешком (км)
+            </label>
+            <input
+              type="number"
+              value={localWalkDistance}
+              onChange={(e) => setLocalWalkDistance(e.target.value)}
+              onBlur={() => {
+                const value = localWalkDistance ? Number(localWalkDistance) : undefined
+                updateDay(index, { walk_distance_km: value })
+              }}
+              placeholder="0"
+              className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
+            />
+          </div>
         </div>
         
-        <div>
-          <label className={typography.body.small + " block mb-2"}>
-            <Car className="w-4 h-4 inline mr-1" />
-            На авто (км)
-          </label>
-          <input
-            type="number"
-            value={day.auto_distance_km || ''}
-            onChange={(e) => updateDay(index, { auto_distance_km: Number(e.target.value) })}
-            placeholder="0"
-            className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
+        {isFullView && (
+          <TourDayActivities
+            activities={day.activities}
+            dayIndex={index}
+            dayNumber={day.day_number}
+            onActivitiesChange={(activities) => updateDay(index, { activities })}
+            uploadingActivity={uploadingActivity}
+            selectedActivityImages={selectedActivityImages}
+            activityFileInputRefs={activityFileInputRefs}
+            onActivityImageSelect={onActivityImageSelect}
+            setSelectedActivityImages={setSelectedActivityImages}
+            typography={typography}
+            forms={forms}
           />
-        </div>
-        
-        <div>
-          <label className={typography.body.small + " block mb-2"}>
-            <Footprints className="w-4 h-4 inline mr-1" />
-            Пешком (км)
-          </label>
-          <input
-            type="number"
-            value={day.walk_distance_km || ''}
-            onChange={(e) => updateDay(index, { walk_distance_km: Number(e.target.value) })}
-            placeholder="0"
-            className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
-          />
-        </div>
+        )}
       </div>
-      
-      {isFullView && (
-        <TourDayActivities
-          activities={day.activities}
-          dayIndex={index}
-          dayNumber={day.day_number}
-          onActivitiesChange={(activities) => updateDay(index, { activities })}
-          uploadingActivity={uploadingActivity}
-          selectedActivityImages={selectedActivityImages}
-          activityFileInputRefs={activityFileInputRefs}
-          onActivityImageSelect={onActivityImageSelect}
-          setSelectedActivityImages={setSelectedActivityImages}
-          typography={typography}
-          forms={forms}
-        />
-      )}
-    </div>
+    )
+  }
+  
+  // Компонент для отображения одного дня
+  const renderDay = (day: TourDay, index: number, isFullView: boolean = true) => (
+    <DayContent day={day} index={index} isFullView={isFullView} showDayNumberInput={viewMode === 'all'} />
   )
 
   return (
