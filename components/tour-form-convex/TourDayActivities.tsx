@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { typography, forms } from '@/hooks/useDesignTokens'
 import { Plus, Trash2, Upload, Loader2, GripVertical, X, Clock } from 'lucide-react'
 import Image from 'next/image'
@@ -90,6 +90,14 @@ function SortableActivity({
   // Локальное состояние для полей чтобы избежать лагов при вводе
   const [localName, setLocalName] = useState(activity.name)
   const [localDescription, setLocalDescription] = useState(activity.description)
+  const [localImageUrl, setLocalImageUrl] = useState(activity.image_url || '')
+  
+  // Синхронизация при изменении пропсов
+  React.useEffect(() => {
+    setLocalName(activity.name)
+    setLocalDescription(activity.description)
+    setLocalImageUrl(activity.image_url || '')
+  }, [activity.name, activity.description, activity.image_url])
   const {
     attributes,
     listeners,
@@ -159,7 +167,7 @@ function SortableActivity({
             onChange={(e) => setLocalDescription(e.target.value)}
             onBlur={() => onUpdate('description', localDescription)}
             placeholder="Описание активности"
-            rows={2}
+            rows={4}
             className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.textarea}
           />
           
@@ -266,8 +274,9 @@ function SortableActivity({
             <div className="mt-2">
               <input
                 type="url"
-                value={activity.image_url || ''}
-                onChange={(e) => onUpdate('image_url', e.target.value)}
+                value={localImageUrl}
+                onChange={(e) => setLocalImageUrl(e.target.value)}
+                onBlur={() => onUpdate('image_url', localImageUrl)}
                 placeholder="Или вставьте URL изображения"
                 className={"w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm " + forms.input}
               />
@@ -332,6 +341,7 @@ export default function TourDayActivities({
   const addActivity = () => {
     const newOrderNumber = activities.length + 1
     const newActivity: Activity = {
+      _id: `new-${dayNumber}-${Date.now()}`, // Добавляем временный ID для новых активностей
       name: '',
       description: '',
       type: 'экскурсия',
