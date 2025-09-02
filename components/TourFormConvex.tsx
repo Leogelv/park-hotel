@@ -299,8 +299,14 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
                 }))
               }))
             })
+          } else {
+            console.log('⚠️ Не сохраняем в БД: tourId:', tourId, 'dayId:', updatedDays[dayIndex]?._id)
           }
+        } else {
+          console.log('❌ Активность не найдена!')
         }
+      } else {
+        console.log('❌ День не найден!')
       }
       
       // После успешной загрузки удаляем файл из временного хранилища

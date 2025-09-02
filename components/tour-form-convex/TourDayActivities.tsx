@@ -75,6 +75,14 @@ function SortableActivityWrapper(props: {
   forms: any
 }) {
   const imageUrl = useFileUrl(props.activity.image || null)
+  console.log('🌅 SortableActivityWrapper:', {
+    activityKey: props.activityKey,
+    'activity.image': props.activity.image,
+    'activity.image_url': props.activity.image_url,
+    'selectedImage': props.selectedImage ? 'есть' : 'нет',
+    'imageUrl from hook': imageUrl,
+    'uploading': props.uploading
+  })
   return <SortableActivity {...props} imageUrl={imageUrl ?? null} />
 }
 
@@ -226,7 +234,17 @@ function SortableActivity({
             <label className={typography.body.caption + " block mb-2"}>
               Изображение активности
             </label>
-            {(imageUrl || selectedImage || activity.image_url) ? (
+            {(() => {
+              const shouldShowImage = imageUrl || selectedImage || activity.image_url
+              console.log('🖼️ Проверяем отображение изображения:', {
+                activityKey,
+                imageUrl,
+                selectedImage: selectedImage ? 'есть' : 'нет',
+                'activity.image_url': activity.image_url,
+                shouldShowImage
+              })
+              return shouldShowImage
+            })() ? (
               <div className="relative w-full h-32 bg-neutral-100 rounded-lg overflow-hidden">
                 <Image
                   src={selectedImage ? URL.createObjectURL(selectedImage) : (imageUrl || activity.image_url)!}
@@ -245,7 +263,10 @@ function SortableActivity({
             ) : (
               <button
                 type="button"
-                onClick={onImageSelect}
+                onClick={() => {
+                  console.log('🔥 Клик по кнопке Загрузить фото, activityKey:', activityKey)
+                  onImageSelect()
+                }}
                 disabled={uploading}
                 className="w-full h-20 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-lg hover:bg-neutral-100 hover:border-primary transition-all flex items-center justify-center gap-2"
               >
@@ -283,12 +304,17 @@ function SortableActivity({
               }}
               type="file"
               onChange={(e) => {
+                console.log('📁 Файл выбран через input, activityKey:', activityKey)
                 const file = e.target.files?.[0]
                 if (file) {
+                  console.log('📄 Файл:', file.name, 'size:', file.size)
                   // Вызываем обработчик загрузки из родительского компонента
                   const dayNumber = parseInt(activityKey.split('-')[0])
                   const activityOrder = parseInt(activityKey.split('-')[1])
+                  console.log('🎯 Вызываем onImageSelect, dayNumber:', dayNumber, 'activityOrder:', activityOrder)
                   onImageSelect(e, dayNumber, activityOrder)
+                } else {
+                  console.log('❌ Файл не выбран')
                 }
               }}
               accept="image/*"
@@ -430,8 +456,15 @@ export default function TourDayActivities({
                   onUpdate={(field, value) => updateActivity(index, field, value)}
                   onRemove={() => removeActivity(index)}
                   onImageSelect={() => {
+                    console.log('🎯 onImageSelect вызван для activityKey:', activityKey)
                     const input = activityFileInputRefs.current[activityKey]
-                    if (input) input.click()
+                    console.log('📂 input ref:', input)
+                    if (input) {
+                      console.log('🔥 Кликаем по скрытому input')
+                      input.click()
+                    } else {
+                      console.log('❌ input ref не найден!')
+                    }
                   }}
                   onImageRemove={() => {
                     updateActivity(index, 'image', undefined)
