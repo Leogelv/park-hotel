@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { typography, forms } from '@/hooks/useDesignTokens'
-import { Plus, Trash2, Upload, Loader2, GripVertical, X, Clock } from 'lucide-react'
+import { Plus, Trash2, Upload, Loader2, GripVertical, X } from 'lucide-react'
 import Image from 'next/image'
 import { useFileUrl } from '@/hooks/useConvex'
 import {
@@ -189,34 +189,8 @@ function SortableActivity({
             className={"w-full px-4 py-2 border border-neutral-200 rounded-lg " + forms.textarea}
           />
           
-          {/* Время и стоимость */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <label className={typography.body.caption + " block mb-1"}>
-                <Clock className="w-3 h-3 inline mr-1" />
-                Начало
-              </label>
-              <input
-                type="time"
-                value={activity.time_start || ''}
-                onChange={(e) => onUpdate('time_start', e.target.value)}
-                className={"px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
-              />
-            </div>
-            
-            <div>
-              <label className={typography.body.caption + " block mb-1"}>
-                <Clock className="w-3 h-3 inline mr-1" />
-                Конец
-              </label>
-              <input
-                type="time"
-                value={activity.time_end || ''}
-                onChange={(e) => onUpdate('time_end', e.target.value)}
-                className={"px-4 py-2 border border-neutral-200 rounded-lg " + forms.input}
-              />
-            </div>
-            
+          {/* Стоимость */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={typography.body.caption + " block mb-1"}>
                 Включено?

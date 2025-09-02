@@ -217,7 +217,8 @@ export const updateTour = mutation({
         price: v.optional(v.number()),
         order_number: v.number(),
         is_included: v.boolean(),
-        image: v.optional(v.string())
+        image: v.optional(v.string()),
+        image_url: v.optional(v.string())
       }))
     }))),
     main_image: v.optional(v.string()),
