@@ -265,7 +265,23 @@ function SortableActivity({
                 type="button"
                 onClick={() => {
                   console.log('🔥 Клик по кнопке Загрузить фото, activityKey:', activityKey)
-                  onImageSelect()
+                  
+                  // Создаем input прямо здесь
+                  const input = document.createElement('input')
+                  input.type = 'file'
+                  input.accept = 'image/*'
+                  input.onchange = (e: any) => {
+                    console.log('📁 Файл выбран!')
+                    const file = e.target?.files?.[0]
+                    if (file) {
+                      console.log('📄 Файл:', file.name)
+                      const dayNumber = parseInt(activityKey.split('-')[0])
+                      const activityOrder = parseInt(activityKey.split('-')[1])
+                      console.log('🎯 Передаем: dayNumber =', dayNumber, ', activityOrder =', activityOrder)
+                      onImageSelect(e, dayNumber, activityOrder)
+                    }
+                  }
+                  input.click()
                 }}
                 disabled={uploading}
                 className="w-full h-20 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-lg hover:bg-neutral-100 hover:border-primary transition-all flex items-center justify-center gap-2"
@@ -295,31 +311,6 @@ function SortableActivity({
                 className={"w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm " + forms.input}
               />
             </div>
-            
-            <input
-              ref={(el) => {
-                if (el && activityFileInputRefs?.current) {
-                  activityFileInputRefs.current[activityKey] = el
-                }
-              }}
-              type="file"
-              onChange={(e) => {
-                console.log('📁 Файл выбран через input, activityKey:', activityKey)
-                const file = e.target.files?.[0]
-                if (file) {
-                  console.log('📄 Файл:', file.name, 'size:', file.size)
-                  // Вызываем обработчик загрузки из родительского компонента
-                  const dayNumber = parseInt(activityKey.split('-')[0])
-                  const activityOrder = parseInt(activityKey.split('-')[1])
-                  console.log('🎯 Вызываем onImageSelect, dayNumber:', dayNumber, 'activityOrder:', activityOrder)
-                  onImageSelect(e, dayNumber, activityOrder)
-                } else {
-                  console.log('❌ Файл не выбран')
-                }
-              }}
-              accept="image/*"
-              className="hidden"
-            />
           </div>
         </div>
         
@@ -457,14 +448,24 @@ export default function TourDayActivities({
                   onRemove={() => removeActivity(index)}
                   onImageSelect={() => {
                     console.log('🎯 onImageSelect вызван для activityKey:', activityKey)
-                    const input = activityFileInputRefs.current[activityKey]
-                    console.log('📂 input ref:', input)
-                    if (input) {
-                      console.log('🔥 Кликаем по скрытому input')
-                      input.click()
-                    } else {
-                      console.log('❌ input ref не найден!')
+                    
+                    // Создаем новый input каждый раз
+                    const input = document.createElement('input')
+                    input.type = 'file'
+                    input.accept = 'image/*'
+                    input.onchange = (e: any) => {
+                      console.log('📁 Файл выбран через созданный input')
+                      const file = e.target?.files?.[0]
+                      if (file) {
+                        console.log('📄 Файл:', file.name)
+                        const dayNumber = parseInt(activityKey.split('-')[0])
+                        const activityOrder = parseInt(activityKey.split('-')[1])
+                        console.log('🎯 Вызываем onActivityImageSelect')
+                        onActivityImageSelect(e, dayNumber, activityOrder)
+                      }
                     }
+                    console.log('🔥 Кликаем по созданному input')
+                    input.click()
                   }}
                   onImageRemove={() => {
                     updateActivity(index, 'image', undefined)
