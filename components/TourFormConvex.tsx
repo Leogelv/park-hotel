@@ -33,6 +33,7 @@ interface Activity {
   name: string
   description: string
   image?: string
+  image_url?: string
   type: string
   time_start?: string
   time_end?: string
@@ -234,13 +235,13 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
     
     const activityKey = `${dayNumber}-${activityOrder}`
     
-    // Сохраняем файл в состоянии
-    setSelectedActivityImages({
-      ...selectedActivityImages,
+    // Сохраняем файл в состоянии чтобы сразу показать превью
+    setSelectedActivityImages(prev => ({
+      ...prev,
       [activityKey]: file
-    })
+    }))
     
-    // Обновляем активность сразу с загруженным изображением
+    // Начинаем загрузку
     setUploadingActivity(activityKey)
     try {
       const storageId = await uploadImage(file)
@@ -252,17 +253,27 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
         const activityIndex = updatedDays[dayIndex].activities.findIndex(a => a.order_number === activityOrder)
         if (activityIndex !== -1) {
           updatedDays[dayIndex].activities[activityIndex].image = storageId
+          // Также очищаем image_url если был
+          updatedDays[dayIndex].activities[activityIndex].image_url = ''
           setDays(updatedDays)
         }
       }
       
-      // Удаляем файл из временного хранилища
-      const updatedImages = { ...selectedActivityImages }
-      delete updatedImages[activityKey]
-      setSelectedActivityImages(updatedImages)
+      // После успешной загрузки удаляем файл из временного хранилища
+      setSelectedActivityImages(prev => {
+        const updated = { ...prev }
+        delete updated[activityKey]
+        return updated
+      })
     } catch (error) {
       console.error('Ошибка при загрузке изображения активности:', error)
       alert('Ошибка при загрузке изображения')
+      // При ошибке тоже удаляем файл из состояния
+      setSelectedActivityImages(prev => {
+        const updated = { ...prev }
+        delete updated[activityKey]
+        return updated
+      })
     } finally {
       setUploadingActivity(null)
       const input = activityFileInputRefs.current[activityKey]
