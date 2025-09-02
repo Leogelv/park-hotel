@@ -47,6 +47,7 @@ interface Activity {
 interface TourDaysProps {
   days: TourDay[]
   onDaysChange: (days: TourDay[]) => void
+  onActivityUpdate?: (dayIndex: number, activityIndex: number, updates: any) => Promise<void>
   uploadingActivity: string | null
   selectedActivityImages: { [key: string]: File }
   activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
@@ -101,6 +102,7 @@ function SortableDay({
 export default function TourDays({
   days,
   onDaysChange,
+  onActivityUpdate,
   uploadingActivity,
   selectedActivityImages,
   activityFileInputRefs,
@@ -287,6 +289,7 @@ export default function TourDays({
             dayIndex={index}
             dayNumber={day.day_number}
             onActivitiesChange={(activities) => updateDay(index, { activities })}
+            onActivityUpdate={onActivityUpdate}
             uploadingActivity={uploadingActivity}
             selectedActivityImages={selectedActivityImages}
             activityFileInputRefs={activityFileInputRefs}

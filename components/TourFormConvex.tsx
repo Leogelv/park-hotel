@@ -228,7 +228,36 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
     }
   }
   
-  // Обработка выбора изображения активности
+  // Обновление активности с автосохранением
+  const updateActivityAndSave = async (dayIndex: number, activityIndex: number, updates: Partial<Activity>) => {
+    const updatedDays = [...days]
+    updatedDays[dayIndex].activities[activityIndex] = {
+      ...updatedDays[dayIndex].activities[activityIndex],
+      ...updates
+    }
+    setDays(updatedDays)
+    
+    // Если редактируем существующий тур, сохраняем в БД
+    if (tourId && updatedDays[dayIndex]._id) {
+      try {
+        await updateTour({
+          id: tourId as Id<"tours">,
+          days: updatedDays.map(day => ({
+            ...day,
+            activities: day.activities.map(act => ({
+              ...act,
+              image: act.image,
+              image_url: act.image_url || ''
+            }))
+          }))
+        })
+      } catch (error) {
+        console.error('Ошибка при сохранении активности:', error)
+      }
+    }
+  }
+  
+  // Обработка выбора изображения активности (по аналогии с обложкой)
   const handleActivityImageSelect = async (e: React.ChangeEvent<HTMLInputElement>, dayNumber: number, activityOrder: number) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -256,6 +285,21 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
           // Также очищаем image_url если был
           updatedDays[dayIndex].activities[activityIndex].image_url = ''
           setDays(updatedDays)
+          
+          // Если редактируем существующий тур, сразу сохраняем в БД (как с обложкой)
+          if (tourId && updatedDays[dayIndex]._id) {
+            await updateTour({
+              id: tourId as Id<"tours">,
+              days: updatedDays.map(day => ({
+                ...day,
+                activities: day.activities.map(act => ({
+                  ...act,
+                  image: act.image,
+                  image_url: act.image_url || ''
+                }))
+              }))
+            })
+          }
         }
       }
       
@@ -306,7 +350,8 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
             price: activity.price,
             order_number: activity.order_number,
             is_included: activity.is_included,
-            image: activity.image
+            image: activity.image,
+            image_url: activity.image_url
           }))
         })),
         included_services: includedServices.filter(s => s.length > 0),
@@ -382,6 +427,7 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
           <TourDays
             days={days}
             onDaysChange={setDays as any}
+            onActivityUpdate={updateActivityAndSave}
             uploadingActivity={uploadingActivity}
             selectedActivityImages={selectedActivityImages}
             activityFileInputRefs={activityFileInputRefs}

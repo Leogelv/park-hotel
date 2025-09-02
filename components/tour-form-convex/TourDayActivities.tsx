@@ -42,6 +42,7 @@ interface TourDayActivitiesProps {
   dayIndex: number
   dayNumber: number
   onActivitiesChange: (activities: Activity[]) => void
+  onActivityUpdate?: (dayIndex: number, activityIndex: number, updates: Partial<Activity>) => Promise<void>
   uploadingActivity: string | null
   selectedActivityImages: { [key: string]: File }
   activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
@@ -314,6 +315,7 @@ export default function TourDayActivities({
   dayIndex,
   dayNumber,
   onActivitiesChange,
+  onActivityUpdate,
   uploadingActivity,
   selectedActivityImages,
   activityFileInputRefs,
@@ -363,10 +365,15 @@ export default function TourDayActivities({
   }
 
   // Обновление активности
-  const updateActivity = (index: number, field: keyof Activity, value: any) => {
+  const updateActivity = async (index: number, field: keyof Activity, value: any) => {
     const updatedActivities = [...activities]
     updatedActivities[index] = { ...updatedActivities[index], [field]: value }
     onActivitiesChange(updatedActivities)
+    
+    // Если обновляем image_url и есть функция автосохранения
+    if ((field === 'image_url' || field === 'image') && onActivityUpdate) {
+      await onActivityUpdate(dayIndex, index, { [field]: value })
+    }
   }
 
   // Drag and drop
