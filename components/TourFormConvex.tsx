@@ -368,11 +368,14 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
           id: tourId as Id<"tours">,
           ...tourData
         })
+        // При редактировании остаемся на странице
       } else {
-        await createTour(tourData)
+        const newTourId = await createTour(tourData)
+        // При создании нового тура переходим на его редактирование
+        if (newTourId) {
+          router.push(`/admin/tours/${newTourId}`)
+        }
       }
-      
-      router.push('/admin/tours')
     } catch (error) {
       console.error('Ошибка при сохранении тура:', error)
       alert('Ошибка при сохранении')
