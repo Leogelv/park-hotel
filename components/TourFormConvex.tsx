@@ -52,7 +52,6 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
   
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const activityFileInputRefs = useRef<{ [key: string]: HTMLInputElement }>({})
   
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -258,8 +257,7 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
   }
   
   // Обработка выбора изображения активности (по аналогии с обложкой)
-  const handleActivityImageSelect = async (e: React.ChangeEvent<HTMLInputElement>, dayNumber: number, activityOrder: number) => {
-    const file = e.target.files?.[0]
+  const handleActivityImageSelect = async (file: File, dayNumber: number, activityOrder: number) => {
     if (!file) return
     
     const activityKey = `${dayNumber}-${activityOrder}`
@@ -326,10 +324,6 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
       })
     } finally {
       setUploadingActivity(null)
-      const input = activityFileInputRefs.current[activityKey]
-      if (input) {
-        input.value = ''
-      }
     }
   }
   
@@ -439,7 +433,6 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
             onActivityUpdate={updateActivityAndSave}
             uploadingActivity={uploadingActivity}
             selectedActivityImages={selectedActivityImages}
-            activityFileInputRefs={activityFileInputRefs}
             onActivityImageSelect={handleActivityImageSelect}
             setSelectedActivityImages={setSelectedActivityImages}
             typography={typography}

@@ -45,8 +45,7 @@ interface TourDayActivitiesProps {
   onActivityUpdate?: (dayIndex: number, activityIndex: number, updates: Partial<Activity>) => Promise<void>
   uploadingActivity: string | null
   selectedActivityImages: { [key: string]: File }
-  activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
-  onActivityImageSelect: (e: React.ChangeEvent<HTMLInputElement>, dayNumber: number, activityOrder: number) => Promise<void>
+  onActivityImageSelect: (file: File, dayNumber: number, activityOrder: number) => Promise<void>
   setSelectedActivityImages: (images: { [key: string]: File }) => void
   typography: any
   forms: any
@@ -68,9 +67,8 @@ function SortableActivityWrapper(props: {
   uploading: boolean
   onUpdate: (field: keyof Activity, value: any) => void
   onRemove: () => void
-  onImageSelect: (e?: any, dayNumber?: number, activityOrder?: number) => void
+  onImageSelect: (file: File) => void
   onImageRemove: () => void
-  activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
   typography: any
   forms: any
 }) {
@@ -97,7 +95,6 @@ function SortableActivity({
   onRemove,
   onImageSelect,
   onImageRemove,
-  activityFileInputRefs,
   typography,
   forms
 }: {
@@ -108,9 +105,8 @@ function SortableActivity({
   uploading: boolean
   onUpdate: (field: keyof Activity, value: any) => void
   onRemove: () => void
-  onImageSelect: (e?: any, dayNumber?: number, activityOrder?: number) => void
+  onImageSelect: (file: File) => void
   onImageRemove: () => void
-  activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
   typography: any
   forms: any
 }) {
@@ -266,7 +262,7 @@ function SortableActivity({
                 onClick={() => {
                   console.log('🔥 Клик по кнопке Загрузить фото, activityKey:', activityKey)
                   
-                  // Создаем input прямо здесь
+                  // Создаем input динамически при каждом клике
                   const input = document.createElement('input')
                   input.type = 'file'
                   input.accept = 'image/*'
@@ -275,10 +271,8 @@ function SortableActivity({
                     const file = e.target?.files?.[0]
                     if (file) {
                       console.log('📄 Файл:', file.name)
-                      const dayNumber = parseInt(activityKey.split('-')[0])
-                      const activityOrder = parseInt(activityKey.split('-')[1])
-                      console.log('🎯 Передаем: dayNumber =', dayNumber, ', activityOrder =', activityOrder)
-                      onImageSelect(e, dayNumber, activityOrder)
+                      // Передаем сам файл напрямую, а не event
+                      onImageSelect(file)
                     }
                   }
                   input.click()
@@ -335,7 +329,6 @@ export default function TourDayActivities({
   onActivityUpdate,
   uploadingActivity,
   selectedActivityImages,
-  activityFileInputRefs,
   onActivityImageSelect,
   setSelectedActivityImages,
   typography,
@@ -446,26 +439,12 @@ export default function TourDayActivities({
                   uploading={uploadingActivity === activityKey}
                   onUpdate={(field, value) => updateActivity(index, field, value)}
                   onRemove={() => removeActivity(index)}
-                  onImageSelect={() => {
+                  onImageSelect={(file: File) => {
                     console.log('🎯 onImageSelect вызван для activityKey:', activityKey)
-                    
-                    // Создаем новый input каждый раз
-                    const input = document.createElement('input')
-                    input.type = 'file'
-                    input.accept = 'image/*'
-                    input.onchange = (e: any) => {
-                      console.log('📁 Файл выбран через созданный input')
-                      const file = e.target?.files?.[0]
-                      if (file) {
-                        console.log('📄 Файл:', file.name)
-                        const dayNumber = parseInt(activityKey.split('-')[0])
-                        const activityOrder = parseInt(activityKey.split('-')[1])
-                        console.log('🎯 Вызываем onActivityImageSelect')
-                        onActivityImageSelect(e, dayNumber, activityOrder)
-                      }
-                    }
-                    console.log('🔥 Кликаем по созданному input')
-                    input.click()
+                    const dayNumber = parseInt(activityKey.split('-')[0])
+                    const activityOrder = parseInt(activityKey.split('-')[1])
+                    console.log('🎯 Вызываем onActivityImageSelect с файлом:', file.name)
+                    onActivityImageSelect(file, dayNumber, activityOrder)
                   }}
                   onImageRemove={() => {
                     updateActivity(index, 'image', undefined)
@@ -474,7 +453,6 @@ export default function TourDayActivities({
                     delete updatedImages[activityKey]
                     setSelectedActivityImages(updatedImages)
                   }}
-                  activityFileInputRefs={activityFileInputRefs}
                   typography={typography}
                   forms={forms}
                 />

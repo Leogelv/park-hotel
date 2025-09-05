@@ -50,8 +50,7 @@ interface TourDaysProps {
   onActivityUpdate?: (dayIndex: number, activityIndex: number, updates: any) => Promise<void>
   uploadingActivity: string | null
   selectedActivityImages: { [key: string]: File }
-  activityFileInputRefs: React.MutableRefObject<{ [key: string]: HTMLInputElement }>
-  onActivityImageSelect: (e: React.ChangeEvent<HTMLInputElement>, dayNumber: number, activityOrder: number) => Promise<void>
+  onActivityImageSelect: (file: File, dayNumber: number, activityOrder: number) => Promise<void>
   setSelectedActivityImages: (images: { [key: string]: File }) => void
   typography: any
   forms: any
@@ -105,7 +104,6 @@ export default function TourDays({
   onActivityUpdate,
   uploadingActivity,
   selectedActivityImages,
-  activityFileInputRefs,
   onActivityImageSelect,
   setSelectedActivityImages,
   typography,
@@ -292,7 +290,6 @@ export default function TourDays({
             onActivityUpdate={onActivityUpdate}
             uploadingActivity={uploadingActivity}
             selectedActivityImages={selectedActivityImages}
-            activityFileInputRefs={activityFileInputRefs}
             onActivityImageSelect={onActivityImageSelect}
             setSelectedActivityImages={setSelectedActivityImages}
             typography={typography}
