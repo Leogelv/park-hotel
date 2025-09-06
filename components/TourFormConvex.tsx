@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, X, Loader2 } from 'lucide-react'
+import { Save, X, Loader2, ArrowLeft } from 'lucide-react'
 import { useQuery, useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -127,7 +127,6 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
       
       // Загружаем extra_services (услуги НЕ включенные в стоимость)
       if (tour.extra_services) {
-        console.log('🔥 Загружаем extra_services из БД:', tour.extra_services)
         setExtraServices(tour.extra_services)
       } else {
         setExtraServices([])
@@ -158,7 +157,6 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
         id: tourId as Id<"tours">,
         updates: changedData
       })
-      console.log('✅ Автосохранение:', Object.keys(changedData).join(', '))
     } catch (error) {
       console.error('Ошибка автосохранения:', error)
     } finally {
@@ -244,9 +242,17 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
           days: updatedDays.map(day => ({
             ...day,
             activities: day.activities.map(act => ({
-              ...act,
+              _id: act._id,
+              name: act.name,
+              description: act.description,
               image: act.image,
-              image_url: act.image_url || ''
+              image_url: act.image_url || '',
+              type: act.type,
+              time_start: act.time_start,
+              time_end: act.time_end,
+              price: act.price,
+              order_number: act.order_number,
+              is_included: act.is_included
             }))
           }))
         })
@@ -291,20 +297,25 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
               days: updatedDays.map(day => ({
                 ...day,
                 activities: day.activities.map(act => ({
-                  ...act,
+                  _id: act._id,
+                  name: act.name,
+                  description: act.description,
                   image: act.image,
-                  image_url: act.image_url || ''
+                  image_url: act.image_url || '',
+                  type: act.type,
+                  time_start: act.time_start,
+                  time_end: act.time_end,
+                  price: act.price,
+                  order_number: act.order_number,
+                  is_included: act.is_included
                 }))
               }))
             })
           } else {
-            console.log('⚠️ Не сохраняем в БД: tourId:', tourId, 'dayId:', updatedDays[dayIndex]?._id)
           }
         } else {
-          console.log('❌ Активность не найдена!')
         }
       } else {
-        console.log('❌ День не найден!')
       }
       
       // После успешной загрузки удаляем файл из временного хранилища
@@ -390,9 +401,19 @@ export default function TourFormConvex({ tourId }: TourFormProps) {
     <form onSubmit={handleSubmit} className="max-w-7xl mx-auto p-4 sm:p-8">
       <div className="bg-white rounded-3xl shadow-soft p-6 sm:p-8">
         <div className="flex items-center justify-between mb-8">
-          <h2 className={typography.heading.page}>
-            {tourId ? 'Редактировать тур' : 'Создать тур'}
-          </h2>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => router.push('/admin/tours')}
+              className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+              title="Вернуться к списку туров"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h2 className={typography.heading.page}>
+              {tourId ? 'Редактировать тур' : 'Создать тур'}
+            </h2>
+          </div>
           {tourId && autoSaving && (
             <div className="flex items-center gap-2 text-sm text-primary bg-primary/10 px-3 py-1 rounded-full">
               <Loader2 className="w-4 h-4 animate-spin" />

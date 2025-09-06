@@ -73,14 +73,6 @@ function SortableActivityWrapper(props: {
   forms: any
 }) {
   const imageUrl = useFileUrl(props.activity.image || null)
-  console.log('🌅 SortableActivityWrapper:', {
-    activityKey: props.activityKey,
-    'activity.image': props.activity.image,
-    'activity.image_url': props.activity.image_url,
-    'selectedImage': props.selectedImage ? 'есть' : 'нет',
-    'imageUrl from hook': imageUrl,
-    'uploading': props.uploading
-  })
   return <SortableActivity {...props} imageUrl={imageUrl ?? null} />
 }
 
@@ -232,13 +224,6 @@ function SortableActivity({
             </label>
             {(() => {
               const shouldShowImage = imageUrl || selectedImage || activity.image_url
-              console.log('🖼️ Проверяем отображение изображения:', {
-                activityKey,
-                imageUrl,
-                selectedImage: selectedImage ? 'есть' : 'нет',
-                'activity.image_url': activity.image_url,
-                shouldShowImage
-              })
               return shouldShowImage
             })() ? (
               <div className="relative w-full h-32 bg-neutral-100 rounded-lg overflow-hidden">
@@ -260,17 +245,13 @@ function SortableActivity({
               <button
                 type="button"
                 onClick={() => {
-                  console.log('🔥 Клик по кнопке Загрузить фото, activityKey:', activityKey)
-                  
                   // Создаем input динамически при каждом клике
                   const input = document.createElement('input')
                   input.type = 'file'
                   input.accept = 'image/*'
                   input.onchange = (e: any) => {
-                    console.log('📁 Файл выбран!')
                     const file = e.target?.files?.[0]
                     if (file) {
-                      console.log('📄 Файл:', file.name)
                       // Передаем сам файл напрямую, а не event
                       onImageSelect(file)
                     }
@@ -440,10 +421,8 @@ export default function TourDayActivities({
                   onUpdate={(field, value) => updateActivity(index, field, value)}
                   onRemove={() => removeActivity(index)}
                   onImageSelect={(file: File) => {
-                    console.log('🎯 onImageSelect вызван для activityKey:', activityKey)
                     const dayNumber = parseInt(activityKey.split('-')[0])
                     const activityOrder = parseInt(activityKey.split('-')[1])
-                    console.log('🎯 Вызываем onActivityImageSelect с файлом:', file.name)
                     onActivityImageSelect(file, dayNumber, activityOrder)
                   }}
                   onImageRemove={() => {
