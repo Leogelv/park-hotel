@@ -111,10 +111,12 @@ export default function TourAvailabilityModal({ tour, onClose }: TourAvailabilit
                     </div>
 
                     <div className="text-right">
-                      {/* Цена */}
-                      <div className="text-lg font-bold text-primary mb-1">
-                        {dateInfo.price.toLocaleString('ru-RU')} ₽
-                      </div>
+                      {/* Цена - скрываем если 0 рублей */}
+                      {dateInfo.price > 0 && (
+                        <div className="text-lg font-bold text-primary mb-1">
+                          {dateInfo.price.toLocaleString('ru-RU')} ₽
+                        </div>
+                      )}
                       
                       {/* Статус */}
                       <div className={`text-sm px-2 py-1 rounded-full ${

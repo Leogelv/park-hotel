@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ArrowLeft, Check, X, Calendar, Users, MapPin, Clock, ChevronRight, Car, Footprints, Home, Mountain, Coffee, Utensils, Bus, Camera, Info, DollarSign, CalendarDays } from 'lucide-react'
+import { ArrowLeft, Check, X, Calendar, Users, MapPin, Clock, ChevronRight, ChevronDown, Car, Footprints, Home, Mountain, Coffee, Utensils, Bus, Camera, Info, DollarSign, CalendarDays } from 'lucide-react'
 import { useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { Id } from '@/convex/_generated/dataModel'
@@ -21,6 +21,8 @@ const activityTypes: Record<string, { label: string; color: string; icon: any }>
 
 // Компонент для отдельной активности чтобы не нарушать правила хуков
 function ActivityCard({ activity }: { activity: any }) {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+  
   const activityType = activityTypes[activity.type] || { 
     label: activity.type, 
     color: 'bg-neutral-500',
@@ -30,6 +32,9 @@ function ActivityCard({ activity }: { activity: any }) {
   
   const storageImageUrl = useFileUrl(activity.image || null)
   const imageUrl = storageImageUrl || activity.image_url
+  
+  // Проверяем, нужна ли кнопка развернуть (если описание длинное)
+  const shouldShowExpandButton = activity.description && activity.description.length > 80
   
   return (
     <div className="bg-white rounded-lg shadow-soft overflow-hidden flex-shrink-0 w-64">
@@ -71,8 +76,36 @@ function ActivityCard({ activity }: { activity: any }) {
         <span className={`px-2 py-1 rounded text-xs font-medium ${activityType.color} text-white inline-block mb-2`}>
           {activityType.label}
         </span>
-        <p className="text-xs text-neutral-600 mb-2 line-clamp-2">{activity.description}</p>
-        {!activity.is_included && activity.price && (
+        
+        {/* Описание с возможностью развернуть */}
+        <div className="mb-2">
+          <p className={`text-xs text-neutral-600 ${isDescriptionExpanded ? '' : 'line-clamp-2'}`}>
+            {activity.description}
+          </p>
+          {shouldShowExpandButton && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsDescriptionExpanded(!isDescriptionExpanded)
+              }}
+              className="flex items-center gap-1 text-xs text-primary hover:text-primary-dark font-medium mt-1 transition-colors"
+            >
+              {isDescriptionExpanded ? (
+                <>
+                  <ChevronDown className="w-3 h-3 rotate-180 transition-transform" />
+                  Свернуть
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3 h-3 transition-transform" />
+                  Развернуть
+                </>
+              )}
+            </button>
+          )}
+        </div>
+        
+        {!activity.is_included && activity.price && activity.price > 0 && (
           <p className="text-xs text-orange-600 font-medium">
             Доп: {activity.price.toLocaleString('ru-RU')} ₽
           </p>
@@ -194,13 +227,15 @@ export default function TourDetailPage() {
 
                   {/* Цена и кнопка */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-baseline gap-2">
-                      <span className={typography.heading.section + " text-primary"}>
-                        {tour.price.toLocaleString('ru-RU')} ₽
-                      </span>
-                      <span className={typography.body.small + " text-neutral-500"}>за человека</span>
-                    </div>
-                    <button className="btn-primary text-sm py-2 px-4">
+                    {tour.price > 0 && (
+                      <div className="flex items-baseline gap-2">
+                        <span className={typography.heading.section + " text-primary"}>
+                          {tour.price.toLocaleString('ru-RU')} ₽
+                        </span>
+                        <span className={typography.body.small + " text-neutral-500"}>за человека</span>
+                      </div>
+                    )}
+                    <button className={`btn-primary text-sm py-2 px-4 ${tour.price <= 0 ? 'ml-auto' : ''}`}>
                       Забронировать
                     </button>
                   </div>

@@ -125,20 +125,22 @@ export default function TourCard({ tour, onOpenDetails }: TourCardProps) {
           </div>
         )}
         
-        {/* Цена */}
-        <div className="mb-5 pb-5 border-b border-beige-200">
-          <div className="flex items-baseline gap-3">
-            <span className={typography.display.price + " text-primary"}>
-              {tour.price.toLocaleString('ru-RU')} ₽
-            </span>
-            {(tour as any).discount_percent && (tour as any).discount_percent > 0 && (
-              <span className={typography.display.oldPrice}>
-                {Math.round(tour.price / (1 - (tour as any).discount_percent / 100)).toLocaleString('ru-RU')} ₽
+        {/* Цена - скрываем если 0 рублей */}
+        {tour.price > 0 && (
+          <div className="mb-5 pb-5 border-b border-beige-200">
+            <div className="flex items-baseline gap-3">
+              <span className={typography.display.price + " text-primary"}>
+                {tour.price.toLocaleString('ru-RU')} ₽
               </span>
-            )}
+              {(tour as any).discount_percent && (tour as any).discount_percent > 0 && (
+                <span className={typography.display.oldPrice}>
+                  {Math.round(tour.price / (1 - (tour as any).discount_percent / 100)).toLocaleString('ru-RU')} ₽
+                </span>
+              )}
+            </div>
+            <span className={typography.body.small + " text-neutral-500"}>за человека</span>
           </div>
-          <span className={typography.body.small + " text-neutral-500"}>за человека</span>
-        </div>
+        )}
 
         {/* Секция "Включено в стоимость" */}
         {tour.included_services && tour.included_services.length > 0 && (
